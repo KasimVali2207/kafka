@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kafka Visualizer | N-Producers, Brokers, Partitions, Offsets & Consumer Groups</title>
+  <meta name="description" content="Visual interactive demonstration of how Apache Kafka processes events from N Producers across Brokers, Topics, Partitions, Offsets, and Consumer Groups.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Top App Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="logo-badge">
+          <svg class="kafka-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" fill="#06B6D4"/>
+            <path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.3 4.3M14.1 14.1l4.3 4.3M5.6 18.4l4.3-4.3M14.1 9.9l4.3-4.3" stroke="#38BDF8"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Kafka<span>Visualizer</span></h1>
+          <span class="badge-fintech">End-to-End Architecture & Event Flow</span>
+        </div>
+      </div>
+
+      <div class="header-flow-status" id="flow-status-banner">
+        <span class="status-indicator"></span>
+        <span id="flow-status-text">Ready to dispatch banking events</span>
+      </div>
+
+      <div class="header-actions">
+        <button class="audio-toggle-btn" id="audio-toggle">
+          <span id="audio-icon">🔊</span> Sound: <span id="audio-status">ON</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+
+    <!-- Cluster Config & Dynamic Sizer Toolbar -->
+    <section class="config-toolbar">
+      <div class="config-grid">
+        
+        <!-- Dynamic N Producers -->
+        <div class="config-item">
+          <div class="config-label-row">
+            <span class="cfg-icon">🚀</span>
+            <label>N Producers</label>
+            <span class="cfg-count" id="count-producers">3</span>
+          </div>
+          <div class="stepper-controls">
+            <button class="btn-step" id="dec-producers" title="Remove Producer">-</button>
+            <span class="step-val" id="val-producers">3 Producers</span>
+            <button class="btn-step" id="inc-producers" title="Add Producer">+</button>
+          </div>
+        </div>
+
+        <!-- Dynamic N Brokers in Cluster -->
+        <div class="config-item">
+          <div class="config-label-row">
+            <span class="cfg-icon">🖥️</span>
+            <label>N Brokers (Cluster)</label>
+            <span class="cfg-count" id="count-brokers">1</span>
+          </div>
+          <div class="stepper-controls">
+            <button class="btn-step" id="dec-brokers" title="Remove Broker">-</button>
+            <span class="step-val" id="val-brokers">1 Brokers</span>
+            <button class="btn-step" id="inc-brokers" title="Add Broker">+</button>
+          </div>
+        </div>
+
+        <!-- Dynamic N Partitions -->
+        <div class="config-item">
+          <div class="config-label-row">
+            <span class="cfg-icon">⚡</span>
+            <label>N Partitions (Topic: <code>bank-tx</code>)</label>
+            <span class="cfg-count" id="count-partitions">3</span>
+          </div>
+          <div class="stepper-controls">
+            <button class="btn-step" id="dec-partitions" title="Remove Partition">-</button>
+            <span class="step-val" id="val-partitions">3 Partitions</span>
+            <button class="btn-step" id="inc-partitions" title="Add Partition">+</button>
+          </div>
+        </div>
+
+        <!-- Dynamic Consumer Groups -->
+        <div class="config-item">
+          <div class="config-label-row">
+            <span class="cfg-icon">👥</span>
+            <label>N Consumer Groups</label>
+            <span class="cfg-count" id="count-groups">2</span>
+          </div>
+          <div class="stepper-controls">
+            <button class="btn-step" id="dec-groups" title="Remove Consumer Group">-</button>
+            <span class="step-val" id="val-groups">2 Groups</span>
+            <button class="btn-step" id="inc-groups" title="Add Consumer Group">+</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Interactive Event Dispatcher & Step Controller -->
+    <section class="dispatcher-panel">
+      <div class="dispatch-form">
+        
+        <div class="form-field">
+          <label for="select-producer-source">Select Producer</label>
+          <select id="select-producer-source" class="input-control">
+            <!-- Populated dynamically based on N producers -->
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="input-account-key">Message Key (Account ID)</label>
+          <div class="key-calc-wrap">
+            <input type="text" id="input-account-key" class="input-control" value="ACC-101">
+            <div class="hash-result-tag" id="hash-calc-badge">
+              <code>hash("ACC-101") % 3</code> = <strong id="target-part-text">P-1</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="select-event-action">Banking Event Payload (Value)</label>
+          <select id="select-event-action" class="input-control">
+            <option value="DEPOSIT">$500.00 Deposit (Salary Credit)</option>
+            <option value="ATM_WITHDRAWAL">$100.00 ATM Cash Withdrawal</option>
+            <option value="CARD_SWIPE">$45.50 Merchant POS Payment</option>
+            <option value="WIRE_TRANSFER">$5,000.00 International Wire</option>
+            <option value="FRAUD_ATTEMPT">$25,000.00 Suspicious Crypto Purchase</option>
+          </select>
+        </div>
+
+        <div class="dispatch-buttons">
+          <button id="btn-fire-event" class="btn btn-primary pulse-btn">
+            <span>⚡</span> Send Event
+          </button>
+          <button id="btn-auto-stream" class="btn btn-secondary">
+            <span id="stream-icon">▶</span> <span id="stream-text">Live Traffic: OFF</span>
+          </button>
+          <button id="btn-step-by-step" class="btn btn-outline" title="Walk through event propagation step by step">
+            <span>👣</span> Step-by-Step Mode
+          </button>
+          <button id="btn-reset-all" class="btn btn-ghost" title="Reset offsets and log records">
+            <span>🔄</span> Reset
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Real-time Step Walkthrough Bar -->
+      <div class="step-walkthrough-bar" id="step-bar">
+        <div class="step-badge" id="step-1-badge">
+          <span class="s-num">1</span>
+          <span class="s-title">Producer Key Hash</span>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="step-badge" id="step-2-badge">
+          <span class="s-num">2</span>
+          <span class="s-title">Broker Leader Append</span>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="step-badge" id="step-3-badge">
+          <span class="s-num">3</span>
+          <span class="s-title">Offset Appended</span>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="step-badge" id="step-4-badge">
+          <span class="s-num">4</span>
+          <span class="s-title">Consumer Groups Poll & Commit</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Architecture Arena (Canvas + Interactive 3-Tier Hierarchy) -->
+    <section class="arena-wrapper">
+      <canvas id="flow-canvas"></canvas>
+
+      <div class="arena-grid">
+
+        <!-- TIER 1: N PRODUCERS -->
+        <div class="arena-tier tier-producers">
+          <div class="tier-header">
+            <span class="tier-dot dot-cyan"></span>
+            <div>
+              <h3>1. N Producers</h3>
+              <p>Key = <code>account_id</code> (Deterministic Hashing)</p>
+            </div>
+          </div>
+          <div class="tier-body" id="producers-container">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- TIER 2: KAFKA CLUSTER (N Brokers + Topic with N Partitions + Offsets) -->
+        <div class="arena-tier tier-cluster">
+          <div class="tier-header">
+            <span class="tier-dot dot-violet"></span>
+            <div class="cluster-title-wrap">
+              <div>
+                <h3>2. Kafka Cluster & Brokers</h3>
+                <p>Topic: <code>bank-transactions</code></p>
+              </div>
+              <span class="cluster-badge">KRaft Consensus</span>
+            </div>
+          </div>
+
+          <!-- N Brokers Display -->
+          <div class="brokers-bar" id="brokers-container">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- N Partitions with Sequential Offsets Log Tape -->
+          <div class="partitions-stack" id="partitions-container">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- TIER 3: N CONSUMER GROUPS & CONSUMERS -->
+        <div class="arena-tier tier-consumers">
+          <div class="tier-header">
+            <span class="tier-dot dot-emerald"></span>
+            <div>
+              <h3>3. N Consumer Groups & Consumers</h3>
+              <p>Independent Commit Offsets & Partition Ownership</p>
+            </div>
+          </div>
+          <div class="tier-body" id="groups-container">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Live Event Audit Feed & Offset Inspector -->
+    <section class="feed-section">
+      <div class="feed-header">
+        <div class="feed-title">
+          <span class="pulse-dot"></span>
+          <h3>Live Kafka Event Stream Log & Offset Commit Audit</h3>
+        </div>
+        <div class="feed-actions">
+          <input type="text" id="filter-input" placeholder="Filter by Account, Partition, or Event...">
+          <button id="clear-log-btn" class="btn btn-sm btn-ghost">Clear Log</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="event-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Producer</th>
+              <th>Message Key (Account)</th>
+              <th>Hash Formula</th>
+              <th>Assigned Partition</th>
+              <th>New Log Offset</th>
+              <th>Payload Value</th>
+              <th>Consumer Group A Commit</th>
+              <th>Consumer Group B Commit</th>
+            </tr>
+          </thead>
+          <tbody id="event-feed-tbody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Deep Dive Concept Explainer Card -->
+    <section class="explanation-card">
+      <div class="exp-grid">
+        <div class="exp-col">
+          <div class="exp-icon">🔑</div>
+          <h4>Why Message Key & Partitions?</h4>
+          <p>
+            When a producer sends an event with key <code>account_id</code>, Kafka computes <code>hash(key) % total_partitions</code>. 
+            This guarantees all transactions for that account always go to the <strong>exact same partition</strong>, ensuring strict in-order chronological processing without race conditions!
+          </p>
+        </div>
+        <div class="exp-col">
+          <div class="exp-icon">📑</div>
+          <h4>What is an Offset?</h4>
+          <p>
+            An offset is a sequential integer ID assigned to each message when written to a partition. Messages in Kafka are immutable. 
+            Offset <code>0, 1, 2, 3...</code> represents the exact chronological position in the write-ahead log.
+          </p>
+        </div>
+        <div class="exp-col">
+          <div class="exp-icon">👥</div>
+          <h4>Independent Consumer Groups</h4>
+          <p>
+            Each Consumer Group maintains its <strong>own independent offset pointer</strong>. Group A (Core Ledger) can be at offset <code>8</code>, 
+            while Group B (Fraud AI) is at offset <code>8</code>, and Group C (Audit Archive) is at offset <code>5</code> reading history without conflict!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div id="syntax-placeholder">
+  <button id="load-syntax-btn" class="syntax-load-btn">Show Kafka Syntax Cheat Sheet</button>
+</div>
+
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>KafkaVisualizer &bull; Interactive Architecture & Event Flow Simulator</p>
+      <div class="footer-tags">
+        <span>N-Producers</span>
+        <span>Topic Partitions</span>
+        <span>Log Offsets</span>
+        <span>Brokers & Cluster</span>
+        <span>Consumer Groups</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script src="syntax.js"></script>
+</body>
+</html>

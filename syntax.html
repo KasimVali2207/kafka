@@ -1,0 +1,668 @@
+<section class="syntax-section" id="syntax-cheatsheet">
+  <div class="syntax-header">
+    <div class="syntax-title-group">
+      <span class="syntax-icon">📋</span>
+      <div>
+        <h2>Kafka Syntax &amp; Troubleshooting Cheat Sheet</h2>
+        <p>Essential commands, production code patterns &amp; emergency diagnostic runbooks</p>
+      </div>
+    </div>
+    <div class="syntax-search-wrap">
+      <input type="text" id="syntax-search" placeholder="🔍 Search commands, issues, error keywords..." class="syntax-search-input">
+    </div>
+  </div>
+
+  <!-- Category Tab Bar -->
+  <div class="syntax-tabs" id="syntax-tabs">
+    <button class="syntax-tab active" data-tab="troubleshoot">🚨 Troubleshooting &amp; Ops</button>
+    <button class="syntax-tab" data-tab="cli">⚙️ CLI Commands</button>
+    <button class="syntax-tab" data-tab="java">☕ Java / Spring</button>
+    <button class="syntax-tab" data-tab="python">🐍 Python</button>
+    <button class="syntax-tab" data-tab="nodejs">🟢 Node.js</button>
+    <button class="syntax-tab" data-tab="config">🛠️ Config Properties</button>
+    <button class="syntax-tab" data-tab="concepts">💡 Key Concepts</button>
+  </div>
+
+  <!-- Tab Content Panels -->
+  <div class="syntax-panels" id="syntax-panels">
+
+    <!-- 1. TROUBLESHOOTING & OPS PANEL -->
+    <div class="syntax-panel active" data-panel="troubleshoot">
+      <div class="syntax-cards-grid" id="troubleshoot-cards">
+        
+        <div class="syn-card" data-tags="troubleshoot lag consumer slow inspect partitions">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-config">Lag Diagnostic</span>
+              <span class="syn-card-title">Inspect Consumer Group Lag &amp; Partition Ownership</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Find which consumer instance is falling behind, which partition has highest lag, and client host IP.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-cmd">kafka-consumer-groups.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 \
+  <span class="tok-flag">--describe</span> <span class="tok-flag">--group</span> banking-core-ledger \
+  <span class="tok-flag">--state</span> <span class="tok-comment"># Shows: TOPIC, PARTITION, CURRENT-OFFSET, LOG-END-OFFSET, LAG, CONSUMER-ID, HOST</span></code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="troubleshoot reset offset rewind replay poison pill earliest">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-config">Offset Reset</span>
+              <span class="syn-card-title">Reset Consumer Offset (Emergency Replay or Skip Poison Pill)</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Rewinds all partitions to earliest offset to replay data, or shift by +1 to bypass a fatal crash loop.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-comment"># Step 1: Dry-run check new positions without committing</span>
+<span class="tok-cmd">kafka-consumer-groups.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 \
+  <span class="tok-flag">--group</span> fraud-detection-group <span class="tok-flag">--reset-offsets</span> \
+  <span class="tok-flag">--topic</span> bank-transactions <span class="tok-flag">--to-earliest</span> <span class="tok-flag">--dry-run</span>
+
+<span class="tok-comment"># Step 2: Execute commit (Consumer group must be inactive / stopped!)</span>
+<span class="tok-cmd">kafka-consumer-groups.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 \
+  <span class="tok-flag">--group</span> fraud-detection-group <span class="tok-flag">--reset-offsets</span> \
+  <span class="tok-flag">--topic</span> bank-transactions <span class="tok-flag">--to-earliest</span> <span class="tok-flag">--execute</span></code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="troubleshoot under-replicated isr broker crash offline">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-cli">Cluster Health</span>
+              <span class="syn-card-title">Detect Under-Replicated &amp; Offline Partitions</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Quickly isolate degraded topics where follower replicas are down or out-of-sync with leader.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-comment"># Check partitions where replicas &lt; replication factor</span>
+<span class="tok-cmd">kafka-topics.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 \
+  <span class="tok-flag">--describe</span> <span class="tok-flag">--under-replicated-partitions</span>
+
+<span class="tok-comment"># Check partitions with NO active leader (read/write stalled!)</span>
+<span class="tok-cmd">kafka-topics.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 \
+  <span class="tok-flag">--describe</span> <span class="tok-flag">--unavailable-partitions</span></code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="troubleshoot dump log inspect corrupt binary segment">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-cli">Segment Inspection</span>
+              <span class="syn-card-title">Dump &amp; Verify Physical Log Segment Files (.log / .index)</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Decode binary Kafka disk segments to view payload, headers, physical byte positions, or find corrupt batches.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-cmd">kafka-dump-log.sh</span> \
+  <span class="tok-flag">--files</span> /tmp/kafka-logs/bank-transactions-0/00000000000000000000.log \
+  <span class="tok-flag">--print-data-log</span> \
+  <span class="tok-flag">--deep-iteration</span> <span class="tok-flag">--verify-index-only</span></code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="troubleshoot purge retention delete data emergency disk full">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-config">Disk Emergency</span>
+              <span class="syn-card-title">Emergency Purge Topic Data (Disk Full Recovery)</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Temporarily force log retention to 1 second to trigger immediate log cleanup when disk hits 100%.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-comment"># Step 1: Temporarily set retention to 1 second</span>
+<span class="tok-cmd">kafka-configs.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 \
+  <span class="tok-flag">--alter</span> <span class="tok-flag">--entity-type</span> topics <span class="tok-flag">--entity-name</span> bank-transactions \
+  <span class="tok-flag">--add-config</span> retention.ms=1000
+
+<span class="tok-comment"># Step 2: Wait 30s for cleaner, then restore standard retention (e.g. 7 days)</span>
+<span class="tok-cmd">kafka-configs.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 \
+  <span class="tok-flag">--alter</span> <span class="tok-flag">--entity-type</span> topics <span class="tok-flag">--entity-name</span> bank-transactions \
+  <span class="tok-flag">--delete-config</span> retention.ms</code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="troubleshoot rebalance max.poll timeout heartbeat">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-config">Rebalance Storm</span>
+              <span class="syn-card-title">Fixing Continuous Consumer Rebalancing (CommitFailedException)</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            If message processing takes longer than <code>max.poll.interval.ms</code>, Kafka assumes consumer is dead and kicks off rebalance storms.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-comment"># Consumer Tuning Fix:</span>
+<span class="tok-prop">max.poll.records</span>=<span class="tok-value">50</span>                 <span class="tok-comment"># Lower batch size (default 500)</span>
+<span class="tok-prop">max.poll.interval.ms</span>=<span class="tok-value">600000</span>         <span class="tok-comment"># Allow up to 10 min for heavy compute</span>
+<span class="tok-prop">session.timeout.ms</span>=<span class="tok-value">45000</span>            <span class="tok-comment"># Heartbeat timeout for network jitter</span>
+<span class="tok-prop">heartbeat.interval.ms</span>=<span class="tok-value">15000</span>         <span class="tok-comment"># Exactly 1/3 of session.timeout.ms</span></code></pre>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 2. CLI COMMANDS PANEL -->
+    <div class="syntax-panel" data-panel="cli">
+      <div class="syntax-cards-grid" id="cli-cards">
+
+        <div class="syn-card" data-tags="cli create topic partitions replication">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-cli">Create Topic</span>
+              <span class="syn-card-title">Create Topic with Partitions &amp; Replication</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Creates a new production-ready topic with partition count and replication factor across brokers.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-cmd">kafka-topics.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 \
+  <span class="tok-flag">--create</span> \
+  <span class="tok-flag">--topic</span> bank-transactions \
+  <span class="tok-flag">--partitions</span> <span class="tok-number">3</span> \
+  <span class="tok-flag">--replication-factor</span> <span class="tok-number">1</span></code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="cli list describe topic details partitions isr">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-cli">Topic Info</span>
+              <span class="syn-card-title">List &amp; Describe Topic Configurations</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            View detailed partition leadership, ISR (In-Sync Replicas), and topic overrides.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-comment"># List all existing topics</span>
+<span class="tok-cmd">kafka-topics.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 <span class="tok-flag">--list</span>
+
+<span class="tok-comment"># Describe partition leaders &amp; replica assignments</span>
+<span class="tok-cmd">kafka-topics.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 \
+  <span class="tok-flag">--describe</span> <span class="tok-flag">--topic</span> bank-transactions</code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="cli produce console test key value separator">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-cli">Producer CLI</span>
+              <span class="syn-card-title">Console Producer (Key:Value with Custom Separator)</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Publish interactive test messages with explicit message keys to test partition routing.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-cmd">kafka-console-producer.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 \
+  <span class="tok-flag">--topic</span> bank-transactions \
+  <span class="tok-flag">--property</span> <span class="tok-string">"parse.key=true"</span> \
+  <span class="tok-flag">--property</span> <span class="tok-string">"key.separator=:"</span>
+
+<span class="tok-comment"># Type lines in terminal:</span>
+ACC-101:{"amount":500,"action":"DEPOSIT"}
+ACC-102:{"amount":100,"action":"ATM_WITHDRAW"}</code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="cli consume console beginning print key timestamp offset">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-cli">Consumer CLI</span>
+              <span class="syn-card-title">Console Consumer with Formatted Metadata</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Reads from beginning and outputs Partition, Offset, Key, and Timestamp for each event.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-cmd">kafka-console-consumer.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 \
+  <span class="tok-flag">--topic</span> bank-transactions \
+  <span class="tok-flag">--from-beginning</span> \
+  <span class="tok-flag">--property</span> print.key=true \
+  <span class="tok-flag">--property</span> print.timestamp=true \
+  <span class="tok-flag">--property</span> print.partition=true \
+  <span class="tok-flag">--property</span> print.offset=true</code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="cli alter partitions scale topic">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-cli">Scale Out</span>
+              <span class="syn-card-title">Increase Topic Partitions Count</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Increase topic partition count for higher parallelism (Note: partitions cannot be decreased!).
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-cmd">kafka-topics.sh</span> <span class="tok-flag">--bootstrap-server</span> localhost:9092 \
+  <span class="tok-flag">--alter</span> <span class="tok-flag">--topic</span> bank-transactions \
+  <span class="tok-flag">--partitions</span> <span class="tok-number">6</span></code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="cli kraft storage format cluster id run">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-cli">KRaft Setup</span>
+              <span class="syn-card-title">KRaft Cluster Format &amp; Start (No ZooKeeper)</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Initialize KRaft cluster ID and format storage directory for modern Kafka 3.x/4.x.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-comment"># 1. Generate unique Cluster UUID</span>
+<span class="tok-cmd">KAFKA_CLUSTER_ID</span>=$(<span class="tok-cmd">kafka-storage.sh</span> random-uuid)
+
+<span class="tok-comment"># 2. Format storage metadata directory</span>
+<span class="tok-cmd">kafka-storage.sh</span> format <span class="tok-flag">-t</span> $KAFKA_CLUSTER_ID <span class="tok-flag">-c</span> config/kraft/server.properties
+
+<span class="tok-comment"># 3. Start KRaft combined broker &amp; controller</span>
+<span class="tok-cmd">kafka-server-start.sh</span> config/kraft/server.properties</code></pre>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 3. JAVA / SPRING PANEL -->
+    <div class="syntax-panel" data-panel="java">
+      <div class="syntax-cards-grid" id="java-cards">
+
+        <div class="syn-card" data-tags="java spring producer kafkatemplate send key header">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-java">Spring Boot</span>
+              <span class="syn-card-title">Resilient Producer with Callbacks &amp; Tracing</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Publishes events keyed by accountId for partition ordering and logs confirmation asynchronously.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-keyword">@Service</span>
+<span class="tok-keyword">public class</span> <span class="tok-type">PaymentProducer</span> {
+  <span class="tok-keyword">@Autowired</span>
+  <span class="tok-keyword">private</span> KafkaTemplate&lt;String, PaymentEvent&gt; kafkaTemplate;
+
+  <span class="tok-keyword">public void</span> sendPayment(PaymentEvent event) {
+    ProducerRecord&lt;String, PaymentEvent&gt; record = <span class="tok-keyword">new</span> ProducerRecord&lt;&gt;(
+      <span class="tok-string">"bank-transactions"</span>, event.getAccountId(), event
+    );
+    record.headers().add(<span class="tok-string">"traceId"</span>, UUID.randomUUID().toString().getBytes());
+
+    kafkaTemplate.send(record).whenComplete((result, ex) -&gt; {
+      <span class="tok-keyword">if</span> (ex == null) {
+        RecordMetadata meta = result.getRecordMetadata();
+        System.out.println(<span class="tok-string">"Partition: "</span> + meta.partition() + <span class="tok-string">" Offset: "</span> + meta.offset());
+      } <span class="tok-keyword">else</span> {
+        System.err.println(<span class="tok-string">"Failed to publish: "</span> + ex.getMessage());
+      }
+    });
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="java spring consumer kafkalistener manual ack concurrency dlq">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-java">Spring Boot</span>
+              <span class="syn-card-title">Consumer with Concurrency &amp; Manual Commit (Ack)</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Processes incoming transactions across partitions with manual offset commit to prevent message loss.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-keyword">@Component</span>
+<span class="tok-keyword">public class</span> <span class="tok-type">LedgerConsumer</span> {
+
+  <span class="tok-keyword">@KafkaListener</span>(
+    topics = <span class="tok-string">"bank-transactions"</span>,
+    groupId = <span class="tok-string">"banking-core-ledger"</span>,
+    concurrency = <span class="tok-string">"3"</span> <span class="tok-comment">// Matches 3 partitions</span>
+  )
+  <span class="tok-keyword">public void</span> consume(ConsumerRecord&lt;String, PaymentEvent&gt; record, Acknowledgment ack) {
+    <span class="tok-keyword">try</span> {
+      processLedgerEntry(record.key(), record.value());
+      ack.acknowledge(); <span class="tok-comment">// Safe commit after processing</span>
+    } <span class="tok-keyword">catch</span> (Exception e) {
+      <span class="tok-comment">// Route to Dead Letter Queue (DLQ)</span>
+      throw <span class="tok-keyword">new</span> RuntimeException(<span class="tok-string">"Failed processing, routing to DLQ"</span>, e);
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="java dlq dead letter queue error handler poison pill">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-java">DLQ Handler</span>
+              <span class="syn-card-title">Dead Letter Publishing Error Handler (Poison Pill Guard)</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Automatically routes failing or unparseable messages to <code>.DLT</code> topic after 3 exponential retries.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-keyword">@Bean</span>
+<span class="tok-keyword">public</span> DefaultErrorHandler errorHandler(KafkaTemplate&lt;Object, Object&gt; template) {
+  <span class="tok-comment">// Forwards bad events to &lt;topic&gt;.DLT with original exception headers</span>
+  DeadLetterPublishingRecoverer recoverer = <span class="tok-keyword">new</span> DeadLetterPublishingRecoverer(template);
+  FixedBackOff backOff = <span class="tok-keyword">new</span> FixedBackOff(1000L, 3); <span class="tok-comment">// 3 retries, 1s interval</span>
+  <span class="tok-keyword">return new</span> DefaultErrorHandler(recoverer, backOff);
+}</code></pre>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 4. PYTHON PANEL -->
+    <div class="syntax-panel" data-panel="python">
+      <div class="syntax-cards-grid" id="python-cards">
+
+        <div class="syn-card" data-tags="python producer confluent-kafka delivery report idempotent">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-python">confluent-kafka</span>
+              <span class="syn-card-title">Production Python Producer with Delivery Report</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Fast C-based Kafka client with idempotence, compression, and delivery receipt confirmation.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-keyword">from</span> confluent_kafka <span class="tok-keyword">import</span> Producer
+<span class="tok-keyword">import</span> json
+
+<span class="tok-keyword">def</span> <span class="tok-cmd">delivery_report</span>(err, msg):
+    <span class="tok-keyword">if</span> err <span class="tok-keyword">is not</span> None:
+        print(<span class="tok-string">f"❌ Publish failed: {err}"</span>)
+    <span class="tok-keyword">else</span>:
+        print(<span class="tok-string">f"✅ Tx committed to {msg.topic()} [P-{msg.partition()}] offset={msg.offset()}"</span>)
+
+producer = Producer({
+    <span class="tok-string">'bootstrap.servers'</span>: <span class="tok-string">'localhost:9092'</span>,
+    <span class="tok-string">'acks'</span>: <span class="tok-string">'all'</span>,
+    <span class="tok-string">'enable.idempotence'</span>: True,
+    <span class="tok-string">'compression.type'</span>: <span class="tok-string">'snappy'</span>
+})
+
+producer.produce(
+    topic=<span class="tok-string">'bank-transactions'</span>,
+    key=<span class="tok-string">'ACC-101'</span>.encode(<span class="tok-string">'utf-8'</span>),
+    value=json.dumps({<span class="tok-string">"amount"</span>: 250, <span class="tok-string">"type"</span>: <span class="tok-string">"TRANSFER"</span>}).encode(<span class="tok-string">'utf-8'</span>),
+    on_delivery=delivery_report
+)
+producer.flush()</code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="python consumer confluent-kafka poll manual commit json">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-python">confluent-kafka</span>
+              <span class="syn-card-title">Resilient Python Consumer with Manual Sync Commit</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Safely polls messages and commits offsets synchronously only after processing completes.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-keyword">from</span> confluent_kafka <span class="tok-keyword">import</span> Consumer, KafkaError
+<span class="tok-keyword">import</span> json
+
+consumer = Consumer({
+    <span class="tok-string">'bootstrap.servers'</span>: <span class="tok-string">'localhost:9092'</span>,
+    <span class="tok-string">'group.id'</span>: <span class="tok-string">'fraud-detection-py'</span>,
+    <span class="tok-string">'auto.offset.reset'</span>: <span class="tok-string">'earliest'</span>,
+    <span class="tok-string">'enable.auto.commit'</span>: False <span class="tok-comment"># Explicit manual commit</span>
+})
+
+consumer.subscribe([<span class="tok-string">'bank-transactions'</span>])
+
+<span class="tok-keyword">try</span>:
+    <span class="tok-keyword">while</span> True:
+        msg = consumer.poll(timeout=1.0)
+        <span class="tok-keyword">if</span> msg <span class="tok-keyword">is</span> None: <span class="tok-keyword">continue</span>
+        <span class="tok-keyword">if</span> msg.error():
+            print(<span class="tok-string">f"Consumer error: {msg.error()}"</span>)
+            <span class="tok-keyword">continue</span>
+
+        data = json.loads(msg.value().decode(<span class="tok-string">'utf-8'</span>))
+        print(<span class="tok-string">f"Processed account {msg.key().decode()}: {data}"</span>)
+        consumer.commit(msg, asynchronous=False) <span class="tok-comment"># Safe commit</span>
+<span class="tok-keyword">finally</span>:
+    consumer.close()</code></pre>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 5. NODE.JS PANEL -->
+    <div class="syntax-panel" data-panel="nodejs">
+      <div class="syntax-cards-grid" id="nodejs-cards">
+
+        <div class="syn-card" data-tags="nodejs kafkajs producer send messages key headers">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-nodejs">KafkaJS</span>
+              <span class="syn-card-title">Node.js KafkaJS Producer (Idempotent)</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Publishes message batches with key-based partition affinity using KafkaJS.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-keyword">const</span> { Kafka, CompressionTypes } = require(<span class="tok-string">'kafkajs'</span>);
+
+<span class="tok-keyword">const</span> kafka = <span class="tok-keyword">new</span> Kafka({
+  clientId: <span class="tok-string">'payment-gateway-node'</span>,
+  brokers: [<span class="tok-string">'localhost:9092'</span>]
+});
+
+<span class="tok-keyword">const</span> producer = kafka.producer({ idempotent: <span class="tok-keyword">true</span> });
+
+<span class="tok-keyword">async function</span> sendTransaction() {
+  <span class="tok-keyword">await</span> producer.connect();
+  <span class="tok-keyword">await</span> producer.send({
+    topic: <span class="tok-string">'bank-transactions'</span>,
+    compression: CompressionTypes.GZIP,
+    messages: [
+      {
+        key: <span class="tok-string">'ACC-101'</span>, <span class="tok-comment">// Ensures same partition</span>
+        value: JSON.stringify({ amount: 500, type: <span class="tok-string">'DEPOSIT'</span> }),
+        headers: { correlationId: <span class="tok-string">'tx-uuid-889'</span> }
+      }
+    ]
+  });
+  console.log(<span class="tok-string">'Transaction dispatched!'</span>);
+}
+sendTransaction();</code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="nodejs kafkajs consumer eachmessage subscribe">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-nodejs">KafkaJS</span>
+              <span class="syn-card-title">Node.js KafkaJS Consumer (eachMessage)</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Subscribes to topic and processes events with automatic partition rebalance handling.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-keyword">const</span> consumer = kafka.consumer({ groupId: <span class="tok-string">'notifications-service'</span> });
+
+<span class="tok-keyword">async function</span> startConsumer() {
+  <span class="tok-keyword">await</span> consumer.connect();
+  <span class="tok-keyword">await</span> consumer.subscribe({ topic: <span class="tok-string">'bank-transactions'</span>, fromBeginning: <span class="tok-keyword">true</span> });
+
+  <span class="tok-keyword">await</span> consumer.run({
+    eachMessage: <span class="tok-keyword">async</span> ({ topic, partition, message }) =&gt; {
+      <span class="tok-keyword">const</span> key = message.key.toString();
+      <span class="tok-keyword">const</span> payload = JSON.parse(message.value.toString());
+      console.log(<span class="tok-string">`[P-${partition}] Offset: ${message.offset} Key: ${key}`</span>, payload);
+    },
+  });
+}
+startConsumer();</code></pre>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 6. CONFIG PROPERTIES PANEL -->
+    <div class="syntax-panel" data-panel="config">
+      <div class="syntax-cards-grid" id="config-cards">
+
+        <div class="syn-card" data-tags="config producer acks idempotence retries zero loss">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-config">Producer</span>
+              <span class="syn-card-title">Financial Durability &amp; Zero Data Loss Config</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Guarantees zero duplicate messages, strict ordering, and multi-broker write acknowledgment.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-comment"># Guarantees all In-Sync Replicas persist message</span>
+<span class="tok-prop">acks</span>=<span class="tok-value">all</span>
+<span class="tok-prop">enable.idempotence</span>=<span class="tok-value">true</span>
+<span class="tok-prop">retries</span>=<span class="tok-value">2147483647</span> <span class="tok-comment"># Retry indefinitely</span>
+<span class="tok-prop">max.in.flight.requests.per.connection</span>=<span class="tok-value">5</span>
+<span class="tok-prop">compression.type</span>=<span class="tok-value">snappy</span> <span class="tok-comment"># Low CPU overhead</span></code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="config topic broker min.insync.replicas replication.factor">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-config">Broker / Topic</span>
+              <span class="syn-card-title">Replication Barrier (min.insync.replicas)</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Requires minimum active replicas before acknowledging produce requests when <code>acks=all</code>.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-comment"># Topic-level config (Minimum 2 replicas must write)</span>
+<span class="tok-prop">min.insync.replicas</span>=<span class="tok-value">2</span>
+
+<span class="tok-comment"># If cluster has 3 brokers, 1 broker can fail without downtime.</span>
+<span class="tok-comment"># If 2 brokers fail, producers get NotEnoughReplicasException.</span></code></pre>
+          </div>
+        </div>
+
+        <div class="syn-card" data-tags="config consumer auto.offset.reset earliest latest">
+          <div class="syn-card-header">
+            <div class="syn-card-meta">
+              <span class="syn-card-badge badge-config">Consumer</span>
+              <span class="syn-card-title">Offset Reset Strategy (earliest vs latest)</span>
+            </div>
+            <button class="syn-copy-btn" title="Copy to clipboard">📋 Copy</button>
+          </div>
+          <div class="syn-card-desc">
+            Determines where a new consumer group starts when no previous committed offset exists.
+          </div>
+          <div class="syn-card-body">
+            <pre class="syn-code-block"><code><span class="tok-comment"># Read all historical messages from beginning of topic</span>
+<span class="tok-prop">auto.offset.reset</span>=<span class="tok-value">earliest</span>
+
+<span class="tok-comment"># Or only process newly arriving events after connection</span>
+<span class="tok-prop">auto.offset.reset</span>=<span class="tok-value">latest</span>
+
+<span class="tok-comment"># Disable auto-commit for zero-loss manual acknowledgment</span>
+<span class="tok-prop">enable.auto.commit</span>=<span class="tok-value">false</span></code></pre>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 7. KEY CONCEPTS PANEL -->
+    <div class="syntax-panel" data-panel="concepts">
+      <div class="syntax-cards-grid" id="concepts-cards">
+
+        <div class="syn-concept-card" data-tags="concept murmurhash key partition ordering">
+          <div class="syn-concept-icon">🔑</div>
+          <div class="syn-concept-title">Partition Key Formula: Strict Chronological Ordering</div>
+          <div class="syn-concept-body">
+            When publishing, Kafka calculates <code>MurmurHash2(key) % num_partitions</code>. Because the mathematical hash for an account ID (e.g. <code>ACC-101</code>) never changes, every credit, debit, and transfer for that specific customer always arrives in the exact same partition in unbroken sequence.
+          </div>
+        </div>
+
+        <div class="syn-concept-card" data-tags="concept offset high watermark isr replication commit">
+          <div class="syn-concept-icon">📑</div>
+          <div class="syn-concept-title">Sequential Offsets &amp; High Watermark (HW)</div>
+          <div class="syn-concept-body">
+            Offsets are 64-bit monotonically increasing integers. The <strong>High Watermark (HW)</strong> represents the latest offset successfully replicated across all In-Sync Replicas. Consumers are only permitted to read up to the HW to prevent reading uncommitted, phantom data.
+          </div>
+        </div>
+
+        <div class="syn-concept-card" data-tags="concept consumer group fan out parallel scale">
+          <div class="syn-concept-icon">👥</div>
+          <div class="syn-concept-title">Consumer Groups &amp; 1-to-Many Independent Read Offsets</div>
+          <div class="syn-concept-body">
+            Each Consumer Group maintains its own cursor pointer in <code>__consumer_offsets</code>. Group A (Core Ledger) can be at offset <code>1000</code>, while Group B (Fraud ML) is at offset <code>1000</code>, and Group C (Audit Archive) is back at offset <code>200</code> replaying history without affecting other consumers!
+          </div>
+        </div>
+
+        <div class="syn-concept-card" data-tags="concept poison pill dlq dead letter topic exception">
+          <div class="syn-concept-icon">☠️</div>
+          <div class="syn-concept-title">Poison Pills &amp; Dead Letter Queues (DLQ)</div>
+          <div class="syn-concept-body">
+            A "Poison Pill" is a corrupted payload that causes a consumer to throw an unhandled deserialization exception. Without a Dead Letter Queue (DLQ), the consumer crashes, restarts, polls the exact same offset, and enters an infinite crash loop, halting the partition.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
