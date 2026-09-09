@@ -92,37 +92,90 @@
     totalPurged: 52
   };
 
-  // --- Tab Navigation Setup ---
+  // --- Sidebar Navigation Setup ---
   function initTabNavigation() {
-    const tabBtns = document.querySelectorAll('.nav-tab-btn');
+    const tabBtns = document.querySelectorAll('.sidebar-nav-btn');
     const viewSections = document.querySelectorAll('.view-section');
 
+    // Sidebar toggle open/close
+    const toggleBtn = document.getElementById('sidebar-toggle');
+    const closeBtn  = document.getElementById('sidebar-close');
+    const overlay   = document.getElementById('sidebar-overlay');
+    const sidebar   = document.getElementById('left-sidebar');
+
+    function openSidebar() {
+      sidebar.classList.add('is-open');
+      overlay.classList.add('is-visible');
+      toggleBtn.classList.add('is-open');
+      toggleBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('is-open');
+      overlay.classList.remove('is-visible');
+      toggleBtn.classList.remove('is-open');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    if (toggleBtn) toggleBtn.addEventListener('click', () => {
+      sidebar.classList.contains('is-open') ? closeSidebar() : openSidebar();
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+    if (overlay)  overlay.addEventListener('click', closeSidebar);
+
+    // Keyboard: Escape closes sidebar
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sidebar.classList.contains('is-open')) {
+        closeSidebar();
+      }
+    });
+
+    // Tab nav click — switch view + close sidebar
     tabBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         const targetViewId = btn.getAttribute('data-view');
         switchView(targetViewId);
+        closeSidebar();
       });
     });
 
-    // Handle "See Kafka Solution" jump buttons
+    // Handle cross-view jump buttons
     document.querySelectorAll('.btn-jump-to-kafka').forEach(el => {
       el.addEventListener('click', (e) => {
         e.preventDefault();
         switchView('view-kafka-simulator');
+        closeSidebar();
       });
     });
 
-    // Handle "Show Syntax" jump buttons
+    document.querySelectorAll('.btn-jump-to-mq').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchView('view-traditional-mq');
+        closeSidebar();
+      });
+    });
+
+    document.querySelectorAll('.btn-jump-to-problem').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchView('view-problem-statement');
+        closeSidebar();
+      });
+    });
+
     document.querySelectorAll('.btn-jump-to-syntax').forEach(el => {
       el.addEventListener('click', (e) => {
         e.preventDefault();
         switchView('view-syntax-cheatsheet');
+        closeSidebar();
       });
     });
   }
 
   function switchView(viewId) {
-    const tabBtns = document.querySelectorAll('.nav-tab-btn');
+    const tabBtns = document.querySelectorAll('.sidebar-nav-btn');
     const viewSections = document.querySelectorAll('.view-section');
 
     tabBtns.forEach(btn => {
@@ -154,6 +207,9 @@
     // Smooth scroll to top of main view container
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  // Expose switchView globally for cross-script access
+  window.switchView = switchView;
 
   // --- Traditional MQ Visualizer Core ---
   const DOM = {};

@@ -14,16 +14,26 @@
   <!-- Top App Header -->
   <header class="app-header">
     <div class="header-container">
-      <div class="brand">
-        <div class="logo-badge">
-          <svg class="kafka-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3" fill="#06B6D4"/>
-            <path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.3 4.3M14.1 14.1l4.3 4.3M5.6 18.4l4.3-4.3M14.1 9.9l4.3-4.3" stroke="#38BDF8"/>
-          </svg>
-        </div>
-        <div class="brand-text">
-          <h1>Kafka<span>Visualizer</span></h1>
-          <span class="badge-fintech">End-to-End Architecture & Event Flow</span>
+
+      <div class="header-left">
+        <!-- Sidebar Toggle (Hamburger) -->
+        <button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Toggle navigation menu" title="Toggle Navigation Menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+
+        <div class="brand">
+          <div class="logo-badge">
+            <svg class="kafka-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" fill="#06B6D4"/>
+              <path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.3 4.3M14.1 14.1l4.3 4.3M5.6 18.4l4.3-4.3M14.1 9.9l4.3-4.3" stroke="#38BDF8"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1>Kafka<span>Visualizer</span></h1>
+            <span class="badge-fintech">End-to-End Architecture &amp; Event Flow</span>
+          </div>
         </div>
       </div>
 
@@ -40,34 +50,574 @@
     </div>
   </header>
 
-  <!-- Top Navigation Tabs -->
-  <nav class="main-tabs-nav" id="main-tabs-nav" aria-label="Architecture Comparison & Simulation Views">
-    <div class="tabs-nav-container">
-      <button class="nav-tab-btn active" data-view="view-traditional-mq" id="tab-btn-mq" title="The Architectural Crisis: Why Traditional Message Queues Break at Scale">
-        <span class="tab-icon">⚠️</span>
-        <span class="tab-title">1. Problems with Traditional MQ (RabbitMQ)</span>
-        <span class="tab-pill pill-warn">Tightly Coupled Architecture &amp; Bottlenecks</span>
-      </button>
-      <button class="nav-tab-btn" data-view="view-kafka-simulator" id="tab-btn-kafka" title="The Distributed Log Solution: Apache Kafka Architecture & Event Flow Simulator">
-        <span class="tab-icon">⚡</span>
-        <span class="tab-title">2. Kafka Architecture &amp; Event Flow Simulator</span>
-        <span class="tab-pill pill-cyan">N-Producers, Partitions &amp; Offsets</span>
-      </button>
-      <button class="nav-tab-btn" data-view="view-syntax-cheatsheet" id="tab-btn-syntax" title="Production Syntax, CLI Commands & Operational Runbooks">
-        <span class="tab-icon">📋</span>
-        <span class="tab-title">3. Commands &amp; Cheat Sheet</span>
-        <span class="tab-pill pill-blue">CLI, Java, Python &amp; Ops</span>
-      </button>
+  <!-- Left Sidebar Navigation Overlay -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- Left Sidebar Navigation Drawer -->
+  <nav class="left-sidebar" id="left-sidebar" aria-label="Architecture Comparison &amp; Simulation Views">
+
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <span class="sidebar-brand-icon">⚡</span>
+        <span class="sidebar-brand-text">Navigation</span>
+      </div>
+      <button class="sidebar-close-btn" id="sidebar-close" aria-label="Close navigation">&times;</button>
     </div>
+
+    <!-- Sidebar Section Label -->
+    <div class="sidebar-section-label">PRESENTATION FLOW</div>
+
+    <!-- Nav Items -->
+    <div class="sidebar-nav-items">
+
+      <button class="sidebar-nav-btn active" data-view="view-problem-statement" id="tab-btn-problem">
+        <div class="sidebar-nav-icon">🌐</div>
+        <div class="sidebar-nav-content">
+          <span class="sidebar-nav-title">The Problem Statement</span>
+          <span class="sidebar-nav-sub">5 communication paradigms &amp; failure modes</span>
+        </div>
+        <span class="sidebar-nav-pill pill-cyan">01</span>
+      </button>
+
+      <button class="sidebar-nav-btn" data-view="view-traditional-mq" id="tab-btn-mq">
+        <div class="sidebar-nav-icon">⚠️</div>
+        <div class="sidebar-nav-content">
+          <span class="sidebar-nav-title">Traditional MQ (RabbitMQ)</span>
+          <span class="sidebar-nav-sub">Why queues break at scale — deep dive</span>
+        </div>
+        <span class="sidebar-nav-pill pill-warn">02</span>
+      </button>
+
+      <button class="sidebar-nav-btn" data-view="view-kafka-simulator" id="tab-btn-kafka">
+        <div class="sidebar-nav-icon">⚡</div>
+        <div class="sidebar-nav-content">
+          <span class="sidebar-nav-title">Kafka Architecture Simulator</span>
+          <span class="sidebar-nav-sub">N-Producers, partitions, offsets &amp; groups</span>
+        </div>
+        <span class="sidebar-nav-pill pill-emerald">03</span>
+      </button>
+
+      <button class="sidebar-nav-btn" data-view="view-syntax-cheatsheet" id="tab-btn-syntax">
+        <div class="sidebar-nav-icon">📋</div>
+        <div class="sidebar-nav-content">
+          <span class="sidebar-nav-title">Commands &amp; Cheat Sheet</span>
+          <span class="sidebar-nav-sub">CLI, Java, Python &amp; operational runbooks</span>
+        </div>
+        <span class="sidebar-nav-pill pill-indigo">04</span>
+      </button>
+
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-label">KafkaVisualizer</div>
+      <div class="sidebar-footer-sub">Interactive Architecture &amp; Event Flow Simulator</div>
+    </div>
+
   </nav>
 
   <!-- Main Container -->
   <main class="main-content">
 
     <!-- ====================================================================
-         VIEW 1: TRADITIONAL MQ (RABBITMQ) & TIGHTLY COUPLED ARCHITECTURE
+         VIEW 1: THE PROBLEM STATEMENT & MESSAGE PASSING PARADIGMS (NEW)
          ==================================================================== -->
-    <div class="view-section active" id="view-traditional-mq">
+    <div class="view-section active" id="view-problem-statement">
+      
+      <!-- Hero & Problem Statement Manifesto -->
+      <section class="pm-hero">
+        
+        <div class="pm-hero-body">
+          
+          <!-- Left: Manifesto -->
+          <div class="pm-hero-left">
+            <div class="pm-hero-eyebrow">
+              <span>🌐</span> Architectural Problem Statement &bull; Distributed Systems
+            </div>
+            <h2>The Distributed Dilemma: <span>How Should Microservices Communicate?</span></h2>
+            <p>
+              When monolithic apps decompose into distributed microservices, one question dominates: 
+              <strong>how do services reliably exchange data without fragile point-to-point coupling, cascading outages, or permanent data loss?</strong>
+            </p>
+
+            <!-- Numbered Learning Journey for Presentation -->
+            <div class="pm-journey-steps">
+              <div class="pm-journey-label">TODAY'S PRESENTATION JOURNEY</div>
+              <div class="pm-journey-item pm-journey-active">
+                <span class="pm-journey-num">1</span>
+                <div>
+                  <strong>The Problem Statement</strong>
+                  <span>5 communication paradigms &amp; their failure modes</span>
+                </div>
+              </div>
+              <div class="pm-journey-item">
+                <span class="pm-journey-num">2</span>
+                <div>
+                  <strong>Traditional MQ Deep Dive</strong>
+                  <span>Why RabbitMQ breaks at scale &mdash; live simulation</span>
+                </div>
+              </div>
+              <div class="pm-journey-item">
+                <span class="pm-journey-num">3</span>
+                <div>
+                  <strong>Apache Kafka Architecture</strong>
+                  <span>N-Producers, partitions, offsets &amp; consumer groups</span>
+                </div>
+              </div>
+              <div class="pm-journey-item">
+                <span class="pm-journey-num">4</span>
+                <div>
+                  <strong>CLI Commands &amp; Runbooks</strong>
+                  <span>Production syntax, Java &amp; Python code snippets</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: 4 Crisis Cards -->
+          <div class="pm-hero-right">
+            <div class="pm-crisis-label">THE 4 CORE PROBLEMS WE SOLVE TODAY</div>
+            <div class="pm-crisis-grid">
+              
+              <div class="pm-crisis-card">
+                <div class="pm-crisis-top">
+                  <span class="pm-crisis-icon">🍝</span>
+                  <h4>N × M Spaghetti</h4>
+                </div>
+                <p>Each new microservice multiplies direct connections O(N²), making systems impossible to scale without rewiring everything.</p>
+              </div>
+
+              <div class="pm-crisis-card">
+                <div class="pm-crisis-top">
+                  <span class="pm-crisis-icon">⏳</span>
+                  <h4>Temporal Coupling</h4>
+                </div>
+                <p>Synchronous HTTP calls require all services to be healthy simultaneously. One slow service cascades outages upstream.</p>
+              </div>
+
+              <div class="pm-crisis-card">
+                <div class="pm-crisis-top">
+                  <span class="pm-crisis-icon">💥</span>
+                  <h4>Data Destruction</h4>
+                </div>
+                <p>Traditional queues delete data on acknowledgement. Bug in billing? Auditor needs logs? <strong>Impossible to replay.</strong></p>
+              </div>
+
+              <div class="pm-crisis-card">
+                <div class="pm-crisis-top">
+                  <span class="pm-crisis-icon">🛑</span>
+                  <h4>Backpressure Freeze</h4>
+                </div>
+                <p>RAM-backed brokers fill up when consumers lag, triggering flow-control that freezes all upstream producers.</p>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Interactive Multi-Method Sandbox -->
+      <section class="pm-simulator-section">
+        
+        <div class="pm-sim-header">
+          <div class="pm-sim-title-group">
+            <h3><span>⚡</span> Interactive Sandbox: The 5 Paradigms of Message Passing &amp; Streaming</h3>
+            <p>Switch between the 5 historical methods below. Dispatch live events, simulate downstream crashes, and attempt historical replay to witness the architectural trade-offs that led to Kafka.</p>
+          </div>
+        </div>
+
+        <!-- Paradigm Selector Tabs -->
+        <div class="pm-method-tabs">
+          <button class="method-tab-btn active" data-method="rest" title="Point-to-point synchronous HTTP/gRPC communication">
+            <span>🌐</span> 1. Direct REST / gRPC
+          </button>
+          <button class="method-tab-btn" data-method="db_polling" title="Shared database table with polling cron jobs">
+            <span>🗄️</span> 2. Database Polling / Outbox
+          </button>
+          <button class="method-tab-btn" data-method="rabbitmq" title="Traditional message broker with destructive queues">
+            <span>🐰</span> 3. Traditional MQ (RabbitMQ)
+          </button>
+          <button class="method-tab-btn" data-method="redis_pubsub" title="In-memory fire-and-forget channel broadcast">
+            <span>📡</span> 4. Ephemeral Pub/Sub (Redis)
+          </button>
+          <button class="method-tab-btn" data-method="kafka" title="Distributed append-only immutable commit log">
+            <span>⚡</span> 5. Distributed Commit Log (Kafka)
+          </button>
+        </div>
+
+        <!-- Active Paradigm Profile & HUD Metrics -->
+        <div class="pm-profile-banner">
+          <div class="pm-profile-top">
+            <div class="pm-profile-title">
+              <h4 id="pm-method-title">1. Synchronous Direct REST / gRPC</h4>
+              <span class="pm-badge pill-blue" id="pm-method-badge">Point-to-Point HTTP</span>
+            </div>
+          </div>
+          <p class="pm-profile-desc" id="pm-method-desc">
+            The producer makes a direct HTTP POST request to downstream services. Every consumer must be online simultaneously. If downstream Billing hangs or crashes, the producer thread is locked until it times out.
+          </p>
+
+          <!-- HUD Architectural Metrics -->
+          <div class="pm-hud-bar">
+            <div class="pm-hud-item">
+              <span class="pm-hud-label">Coupling Model</span>
+              <div class="pm-hud-value" id="pm-val-coupling" style="color: #38BDF8;">Tight (Temporal &amp; Spatial)</div>
+            </div>
+            <div class="pm-hud-item">
+              <span class="pm-hud-label">Storage &amp; Buffer Model</span>
+              <div class="pm-hud-value" id="pm-val-storage" style="color: #FBBF24;">None (In-transit memory only)</div>
+            </div>
+            <div class="pm-hud-item">
+              <span class="pm-hud-label">Historical Replayability</span>
+              <div class="pm-hud-value" id="pm-val-replay" style="color: #F87171;">Impossible (0%)</div>
+            </div>
+            <div class="pm-hud-item">
+              <span class="pm-hud-label">End-to-End Latency</span>
+              <div class="pm-hud-value" id="pm-val-latency" style="color: #34D399;">45ms</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Action Toolbar -->
+        <div class="pm-toolbar">
+          <button id="pm-btn-send" class="btn-pm-primary" title="Dispatch a transaction through this communication medium">
+            <span>⚡</span> Dispatch Message
+          </button>
+          <button id="pm-btn-crash" class="btn-pm-danger" title="Simulate a crash or slow processing in the Billing Service">
+            <span>💥</span> Crash / Slow Billing Service
+          </button>
+          <button id="pm-btn-replay" class="btn-pm-outline" title="Attempt to replay historical messages like in an audit or bug fix">
+            <span>🔄</span> Attempt Historical Replay
+          </button>
+          <button id="pm-btn-auto" class="btn-pm-outline" title="Stream continuous simulated traffic">
+            <span>▶</span> Live Traffic: OFF
+          </button>
+          <button id="pm-btn-reset" class="btn-pm-outline" title="Reset simulation state to defaults">
+            <span>🔁</span> Reset Simulation
+          </button>
+        </div>
+
+        <!-- Dynamic Real-Time Alert Banner -->
+        <div class="pm-alert-banner" id="pm-alert-banner">
+          <div class="pm-alert-inner">
+            <span class="pm-alert-icon">🛑</span>
+            <div class="pm-alert-content">
+              <h4 id="pm-alert-title">Failure Detected!</h4>
+              <p id="pm-alert-desc">Description of architectural failure mode.</p>
+            </div>
+          </div>
+          <button class="pm-close-alert-btn" id="pm-alert-close">&times;</button>
+        </div>
+
+        <!-- The 3-Tier Message Passing Arena Grid -->
+        <div class="pm-arena-grid">
+          
+          <!-- TIER 1: UPSTREAM PRODUCER -->
+          <div class="pm-tier-col">
+            <div class="pm-tier-header">
+              <h4><span>🛒</span> 1. Upstream Producer</h4>
+              <span>Checkout Web &amp; Payment Gateway</span>
+            </div>
+
+            <div class="pm-node-card" id="pm-node-producer">
+              <div class="pm-node-top">
+                <span class="pm-node-name">E-Commerce Checkout API</span>
+                <span class="pm-node-status status-healthy">ACTIVE</span>
+              </div>
+              <div class="pm-node-sub">Payload: <code>{ order_id: "ORD-101", amount: $250.00 }</code></div>
+              <div class="pm-node-note">Originates customer financial events. Must remain ultra-fast and never get blocked.</div>
+            </div>
+          </div>
+
+          <!-- TIER 2: INTERMEDIARY COMMUNICATION MEDIUM -->
+          <div class="pm-tier-col">
+            <div class="pm-tier-header">
+              <h4><span>🔀</span> 2. Intermediary / Medium</h4>
+              <span id="pm-medium-title">Direct HTTP / TCP Socket (Zero Intermediary)</span>
+            </div>
+
+            <div class="pm-medium-box" id="pm-medium-box">
+              <div class="pm-medium-header">
+                <h4>Communication Infrastructure</h4>
+                <span id="pm-medium-sub">Synchronous blocking thread &bull; HTTP POST /orders</span>
+              </div>
+
+              <div class="pm-medium-visual" id="pm-medium-visual">
+                <!-- Dynamically rendered by problem-statement.js -->
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 3: DOWNSTREAM CONSUMERS -->
+          <div class="pm-tier-col">
+            <div class="pm-tier-header">
+              <h4><span>👥</span> 3. Downstream Consumers</h4>
+              <span>Independent Business Microservices</span>
+            </div>
+
+            <!-- Consumer 1: Billing (Target of crash simulation) -->
+            <div class="pm-node-card" id="pm-consumer-billing">
+              <div class="pm-node-top">
+                <span class="pm-node-name">💳 Billing &amp; Invoicing Svc</span>
+                <span class="pm-node-status status-healthy" id="pm-billing-status">ONLINE</span>
+              </div>
+              <div class="pm-node-sub">Consuming order events</div>
+              <div class="pm-node-note" id="pm-billing-note">Active &amp; Processing normally</div>
+            </div>
+
+            <!-- Consumer 2: Real-Time Fraud / Analytics -->
+            <div class="pm-node-card" id="pm-consumer-analytics">
+              <div class="pm-node-top">
+                <span class="pm-node-name">📊 Analytics &amp; Fraud AI</span>
+                <span class="pm-node-status status-healthy">ONLINE</span>
+              </div>
+              <div class="pm-node-sub">Consuming order events</div>
+              <div class="pm-node-note">Needs every single transaction for risk scoring and business metrics.</div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Real-Time Audit Feed -->
+        <div class="pm-feed-card">
+          <div class="pm-feed-header">
+            <h4><span>📟</span> Live Message Passing Audit Log</h4>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Real-time dispatch trace, latency metrics, and failure diagnostics</span>
+          </div>
+          <ul class="pm-feed-list" id="pm-feed-list">
+            <!-- Dynamically populated by problem-statement.js -->
+          </ul>
+        </div>
+
+      </section>
+
+      <!-- The 5 Paradigms Educational Deep-Dive Cards -->
+      <section class="pm-cards-section">
+        <div class="pm-sec-header">
+          <div class="pm-sec-eyebrow">PARADIGM EVOLUTION — FROM WORST TO BEST</div>
+          <h3 class="pm-sec-title"><span>📚</span> The 5 Patterns of Service Communication: A Technical Deep Dive</h3>
+          <p class="pm-sec-desc">
+            Every architecture is a set of trade-offs. Each paradigm below emerged to solve the failure modes of the previous one — follow the progression to understand <em>why Kafka was engineered the way it was</em>.
+          </p>
+        </div>
+
+        <!-- Paradigm Evolution Flow Arrow -->
+        <div class="pm-evolution-bar">
+          <span class="pm-evo-step evo-bad">① REST/gRPC</span>
+          <span class="pm-evo-arrow">→</span>
+          <span class="pm-evo-step evo-bad">② DB Polling</span>
+          <span class="pm-evo-arrow">→</span>
+          <span class="pm-evo-step evo-warn">③ RabbitMQ</span>
+          <span class="pm-evo-arrow">→</span>
+          <span class="pm-evo-step evo-warn">④ Redis PubSub</span>
+          <span class="pm-evo-arrow">→</span>
+          <span class="pm-evo-step evo-good">⑤ Kafka ✓</span>
+        </div>
+
+        <div class="pm-cards-grid">
+          
+          <!-- Method 1 -->
+          <div class="pm-paradigm-card">
+            <div>
+              <div class="pm-card-badge-row">
+                <span class="pm-card-icon">🌐</span>
+                <span class="pm-badge pill-blue">Synchronous</span>
+              </div>
+              <h4>1. Direct REST / gRPC</h4>
+              <p>Producer issues a direct HTTP request to the consumer and waits synchronously for the response.</p>
+            </div>
+            <div>
+              <div class="pm-card-box box-good">
+                <strong>When to Use:</strong> Simple request-response (e.g. querying user profile), synchronous validation where caller must block.
+              </div>
+              <div class="pm-card-box box-bad">
+                <strong>Failure Trap:</strong> Cascading latency and timeouts. If Billing takes 4s, Checkout takes 4s. If Billing crashes, Checkout fails. Zero replay.
+              </div>
+            </div>
+          </div>
+
+          <!-- Method 2 -->
+          <div class="pm-paradigm-card">
+            <div>
+              <div class="pm-card-badge-row">
+                <span class="pm-card-icon">🗄️</span>
+                <span class="pm-badge pill-amber">Table Polling</span>
+              </div>
+              <h4>2. Database Polling / Outbox</h4>
+              <p>Producers insert events as rows in a shared database table. Consumers periodically poll via cron with <code>SELECT ... FOR UPDATE</code>.</p>
+            </div>
+            <div>
+              <div class="pm-card-box box-good">
+                <strong>When to Use:</strong> Transactional Outbox pattern when you must atomically commit state and event within the same ACID transaction.
+              </div>
+              <div class="pm-card-box box-bad">
+                <strong>Failure Trap:</strong> High polling latency (polling every 5s is not real-time). Row locks create severe DB contention and high CPU under scale.
+              </div>
+            </div>
+          </div>
+
+          <!-- Method 3 -->
+          <div class="pm-paradigm-card">
+            <div>
+              <div class="pm-card-badge-row">
+                <span class="pm-card-icon">🐰</span>
+                <span class="pm-badge pill-orange">Destructive Queue</span>
+              </div>
+              <h4>3. Traditional MQ (RabbitMQ / SQS)</h4>
+              <p>Brokers manage in-memory queues with routing exchanges. Once a consumer sends <code>basic.ack</code>, the message is permanently destroyed from broker RAM.</p>
+            </div>
+            <div>
+              <div class="pm-card-box box-good">
+                <strong>When to Use:</strong> Task distribution, background jobs, delayed task execution, complex AMQP header routing.
+              </div>
+              <div class="pm-card-box box-bad">
+                <strong>Failure Trap:</strong> Zero replayability (erased on ack). If consumers lag, RAM fills up and triggers broker backpressure, locking up producers.
+              </div>
+            </div>
+          </div>
+
+          <!-- Method 4 -->
+          <div class="pm-paradigm-card">
+            <div>
+              <div class="pm-card-badge-row">
+                <span class="pm-card-icon">📡</span>
+                <span class="pm-badge pill-rose">Fire-and-Forget</span>
+              </div>
+              <h4>4. Ephemeral Pub/Sub (Redis / SNS)</h4>
+              <p>In-memory broadcast where publishers emit messages to channels. Connected subscribers receive the payload immediately in memory.</p>
+            </div>
+            <div>
+              <div class="pm-card-box box-good">
+                <strong>When to Use:</strong> Chat applications, live multiplayer score tickers, notifications where losing occasional packets is acceptable.
+              </div>
+              <div class="pm-card-box box-bad">
+                <strong>Failure Trap:</strong> Zero persistence. If a consumer disconnects for 100ms during a network blip or restart, all messages during that window are permanently lost!
+              </div>
+            </div>
+          </div>
+
+          <!-- Method 5 — highlighted as the solution -->
+          <div class="pm-paradigm-card pm-paradigm-kafka">
+            <div>
+              <div class="pm-card-badge-row">
+                <span class="pm-card-icon">⚡</span>
+                <span class="pm-badge pill-cyan">Immutable Log</span>
+                <span class="pm-kafka-winner-badge">THE SOLUTION ★</span>
+              </div>
+              <h4>5. Distributed Commit Log (Kafka)</h4>
+              <p>Events are written sequentially to an immutable append-only disk log via OS page cache zero-copy DMA. Consumers track their own offsets independently.</p>
+            </div>
+            <div>
+              <div class="pm-card-box box-good">
+                <strong>When to Use:</strong> High-throughput event streaming, distributed ledgers, microservice event backbones, ML pipelines, audit trails.
+              </div>
+              <div class="pm-card-box box-kafka">
+                <strong>Key Superpower:</strong> Producers and consumers are 100% decoupled. Dead consumers never slow producers. 100% historical replayability by resetting offset!
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Comprehensive 5-Way Matrix Table -->
+      <section class="pm-matrix-section">
+        <h3 class="pm-sec-title"><span>⚖️</span> Architecture Matrix: Comparing All 5 Message Passing Paradigms</h3>
+        <p class="pm-sec-desc">
+          How each paradigm performs across critical production dimensions: latency, durability, replay, blast radius, and throughput.
+        </p>
+
+        <div style="overflow-x: auto;">
+          <table class="pm-matrix-table">
+            <thead>
+              <tr>
+                <th>Dimension</th>
+                <th>1. Direct REST/gRPC</th>
+                <th>2. Database Polling</th>
+                <th>3. Traditional MQ (RabbitMQ)</th>
+                <th>4. Redis Pub/Sub</th>
+                <th class="pm-col-highlight">5. Apache Kafka</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Communication Style</strong></td>
+                <td>Synchronous Request / Response</td>
+                <td>Asynchronous Batch Pull</td>
+                <td>Asynchronous Push with ACK</td>
+                <td>Fire-and-Forget Push</td>
+                <td class="pm-col-highlight"><strong>Asynchronous Pull (Commit Log)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Storage &amp; Durability</strong></td>
+                <td>None (In-transit RAM)</td>
+                <td>Relational DB Table</td>
+                <td>Ephemeral RAM Queues</td>
+                <td>None (Lost if offline)</td>
+                <td class="pm-col-highlight"><strong>Immutable Sequential Disk Log</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Historical Replayability</strong></td>
+                <td>Impossible (0%)</td>
+                <td>Limited (Table purged)</td>
+                <td>Impossible (Erased on ACK)</td>
+                <td>Impossible (0%)</td>
+                <td class="pm-col-highlight"><strong>100% (Instant Offset Rewind)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Slow/Dead Consumer Impact</strong></td>
+                <td>Cascading Timeout (504)</td>
+                <td>Table bloat &amp; lock waits</td>
+                <td>RAM bloat &amp; backpressure freeze</td>
+                <td>Silent data loss</td>
+                <td class="pm-col-highlight"><strong>Zero impact (Isolated offset pointer)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Ordering Guarantee</strong></td>
+                <td>Per-connection sequential</td>
+                <td>Sort by primary key</td>
+                <td>Single consumer only</td>
+                <td>Best effort arrival</td>
+                <td class="pm-col-highlight"><strong>Strict total order per partition key</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Throughput Scale</strong></td>
+                <td>Thousands req/sec</td>
+                <td>Hundreds rows/sec</td>
+                <td>Tens of thousands msg/sec</td>
+                <td>High (In-memory)</td>
+                <td class="pm-col-highlight"><strong>Millions msg/sec (Zero-Copy I/O)</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Jump CTAs to Deep-Dives -->
+      <section class="tmq-jump-cta">
+        <h3>Ready to Explore the Technical Mechanics in Action?</h3>
+        <p>
+          Dive deeper into the architectural bottlenecks of Traditional Message Queues, or jump straight into Kafka's distributed cluster, partitions, offsets, and consumer groups simulator!
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem;">
+          <button class="btn-cta-launch btn-jump-to-mq">
+            <span>⚠️</span> 2. Explore Traditional MQ Bottlenecks &rarr;
+          </button>
+          <button class="btn-cta-launch btn-jump-to-kafka">
+            <span>🚀</span> 3. Open Kafka Distributed Simulator &rarr;
+          </button>
+        </div>
+      </section>
+
+    </div><!-- /#view-problem-statement -->
+
+    <!-- ====================================================================
+         VIEW 2: TRADITIONAL MQ (RABBITMQ) & TIGHTLY COUPLED ARCHITECTURE
+         ==================================================================== -->
+    <div class="view-section" id="view-traditional-mq">
       
       <!-- Hero & Context Banner -->
       <section class="tmq-hero">
@@ -850,10 +1400,36 @@
     </div>
   </div>
 
+  <!-- Modal: Problem Statement Replay Demonstration -->
+  <div class="tmq-modal-overlay" id="pm-replay-modal">
+    <div class="tmq-modal-dialog">
+      <div class="tmq-modal-header">
+        <span class="tmq-modal-icon">🔄</span>
+        <div>
+          <h3 id="pm-modal-title">Replay Simulation Result</h3>
+          <p id="pm-modal-sub">Architecture Historical Audit Test</p>
+        </div>
+      </div>
+      <div class="tmq-modal-body">
+        <div class="tmq-modal-code" id="pm-modal-code">
+          <!-- Populated by problem-statement.js -->
+        </div>
+        <p id="pm-modal-explanation">
+          <!-- Populated by problem-statement.js -->
+        </p>
+      </div>
+      <div class="tmq-modal-actions">
+        <button class="btn btn-ghost" id="pm-modal-close">Close</button>
+        <button class="btn btn-primary" id="pm-modal-jump-kafka">See Kafka Distributed Log &rarr;</button>
+      </div>
+    </div>
+  </div>
+
   <footer class="app-footer">
     <div class="footer-container">
       <p>KafkaVisualizer &bull; Interactive Architecture & Event Flow Simulator</p>
       <div class="footer-tags">
+        <span>Message Passing Paradigms</span>
         <span>Traditional MQ vs Kafka</span>
         <span>N-Producers</span>
         <span>Topic Partitions</span>
@@ -866,6 +1442,7 @@
 
   <script src="app.js"></script>
   <script src="traditional-mq.js"></script>
+  <script src="problem-statement.js"></script>
   <script src="syntax.js"></script>
 </body>
 </html>
