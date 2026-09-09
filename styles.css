@@ -1433,3 +1433,1202 @@ body {
   .syntax-search-input { width: 100%; }
 }
 
+/* ==========================================================================
+   Top-Level Tab Navigation System
+   ========================================================================== */
+
+.main-tabs-nav {
+  position: sticky;
+  top: 56px;
+  z-index: 95;
+  background: rgba(13, 18, 29, 0.95);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.4rem 1.25rem;
+}
+
+.tabs-nav-container {
+  max-width: 1720px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs-nav-container::-webkit-scrollbar { display: none; }
+
+.nav-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: rgba(21, 28, 44, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.45rem 0.9rem;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  position: relative;
+}
+
+.nav-tab-btn:hover {
+  background: rgba(30, 41, 64, 0.9);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.nav-tab-btn.active {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.16), rgba(13, 18, 29, 0.95));
+  border-color: var(--color-cyan);
+  color: var(--text-primary);
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.25);
+}
+
+.nav-tab-btn.active#tab-btn-mq {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(13, 18, 29, 0.95));
+  border-color: var(--color-amber);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.25);
+}
+
+.nav-tab-btn .tab-icon {
+  font-size: 1rem;
+}
+
+.nav-tab-btn .tab-title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.tab-pill {
+  font-size: 0.66rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tab-pill.pill-warn {
+  background: rgba(245, 158, 11, 0.16);
+  color: #FBBF24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.tab-pill.pill-cyan {
+  background: rgba(6, 182, 212, 0.16);
+  color: #67E8F9;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.tab-pill.pill-blue {
+  background: rgba(59, 130, 246, 0.16);
+  color: #93C5FD;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* View Sections Toggle */
+.view-section {
+  display: none;
+  animation: fadeInView 0.25s ease-out forwards;
+}
+
+.view-section.active {
+  display: block;
+}
+
+@keyframes fadeInView {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Traditional MQ vs Kafka - View Styles
+   ========================================================================== */
+
+.tmq-hero {
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(21, 28, 44, 0.8) 50%, rgba(239, 68, 68, 0.06) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+.tmq-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -20%;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.tmq-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #FBBF24;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 0.75rem;
+}
+
+.tmq-hero h2 {
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 0.6rem;
+  line-height: 1.25;
+}
+
+.tmq-hero h2 span {
+  color: #F59E0B;
+}
+
+.tmq-hero p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  max-width: 1050px;
+  line-height: 1.6;
+}
+
+/* Traditional MQ Simulation Container */
+.tmq-simulator-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 1.4rem;
+  margin-bottom: 1.75rem;
+  box-shadow: var(--shadow-card);
+}
+
+.tmq-sim-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.tmq-sim-title-group h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tmq-sim-title-group p {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+/* Real-Time Architectural Metrics HUD */
+.tmq-hud-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+  background: rgba(13, 18, 29, 0.85);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.tmq-hud-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.tmq-hud-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.tmq-hud-value {
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tmq-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-green {
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+}
+
+.dot-red {
+  background: #EF4444;
+  box-shadow: 0 0 10px #EF4444;
+  animation: pulseCrash 0.9s infinite alternate;
+}
+
+.dot-amber {
+  background: #F59E0B;
+  box-shadow: 0 0 8px #F59E0B;
+}
+
+/* Memory Progress Meter */
+.tmq-gauge-track {
+  width: 100%;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.tmq-gauge-fill {
+  height: 100%;
+  width: 24%;
+  background: linear-gradient(90deg, #10B981, #06B6D4);
+  border-radius: 999px;
+  transition: width 0.35s ease, background 0.35s ease;
+}
+
+/* Action Toolbar */
+.tmq-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+  padding: 0.75rem 1rem;
+  background: rgba(21, 28, 44, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.btn-tmq-primary {
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: #070A10;
+  font-weight: 800;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.55rem 1.1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-tmq-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+}
+
+.btn-tmq-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #FCA5A5;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.83rem;
+  transition: all 0.2s ease;
+}
+
+.btn-tmq-danger:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #EF4444;
+  color: #FFFFFF;
+}
+
+.btn-tmq-danger.btn-recovering {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10B981;
+  color: #6EE7B7;
+}
+
+.btn-tmq-purple {
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  color: #C4B5FD;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.83rem;
+  transition: all 0.2s ease;
+}
+
+.btn-tmq-purple:hover {
+  background: rgba(139, 92, 246, 0.25);
+  border-color: #8B5CF6;
+  color: #FFFFFF;
+}
+
+.btn-tmq-outline {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  padding: 0.55rem 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.83rem;
+  transition: all 0.2s ease;
+}
+
+.btn-tmq-outline:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.btn-tmq-outline.btn-streaming {
+  border-color: #10B981;
+  color: #34D399;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+/* Dynamic Alert Banner */
+.tmq-alert-banner {
+  display: none;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(13, 18, 29, 0.95));
+  border: 1px solid #EF4444;
+  border-radius: var(--radius-lg);
+  padding: 0.9rem 1.25rem;
+  margin-bottom: 1.2rem;
+  position: relative;
+  box-shadow: 0 0 24px rgba(239, 68, 68, 0.35);
+  animation: slideDownAlert 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.tmq-alert-banner.active {
+  display: block;
+}
+
+@keyframes slideDownAlert {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tmq-alert-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.tmq-alert-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.tmq-alert-content h4 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #FCA5A5;
+  margin-bottom: 0.25rem;
+}
+
+.tmq-alert-content p {
+  font-size: 0.84rem;
+  color: #E2E8F0;
+  line-height: 1.5;
+}
+
+.tmq-close-alert-btn {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #FCA5A5;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+.tmq-close-alert-btn:hover { background: rgba(239, 68, 68, 0.3); color: #FFF; }
+
+/* The 3-Tier Traditional MQ Arena Grid */
+.tmq-arena-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 300px;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+  .tmq-arena-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tmq-tier-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.tmq-tier-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.tmq-tier-header h4 {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.tmq-tier-header span {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* Producer Nodes */
+.tmq-prod-node {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 0.9rem;
+  transition: all 0.25s ease;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.tmq-prod-node.tmq-flash {
+  border-color: #F59E0B;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.45);
+  transform: scale(1.02);
+}
+
+.tmq-prod-node.prod-blocked {
+  border-color: #EF4444;
+  background: rgba(239, 68, 68, 0.12);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  animation: shakeBlocked 0.4s ease-in-out infinite alternate;
+}
+
+@keyframes shakeBlocked {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(2px); }
+  100% { transform: translateX(-2px); }
+}
+
+.tmq-node-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.tmq-node-name {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.tmq-prod-status-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.tag-online {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.tag-blocked {
+  background: rgba(239, 68, 68, 0.25);
+  color: #F87171;
+  border: 1px solid #EF4444;
+}
+
+.tmq-node-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.tmq-coupling-pill {
+  margin-top: 0.5rem;
+  font-size: 0.68rem;
+  color: #FBBF24;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px dashed rgba(245, 158, 11, 0.3);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  display: block;
+}
+
+/* Central RabbitMQ Broker Container */
+.tmq-broker-box {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1.5px solid rgba(245, 158, 11, 0.35);
+  border-radius: var(--radius-xl);
+  padding: 1.15rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+
+.tmq-broker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tmq-broker-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.tmq-broker-icon {
+  font-size: 1.3rem;
+}
+
+.tmq-broker-title h4 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.tmq-broker-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: rgba(245, 158, 11, 0.15);
+  color: #FBBF24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* Exchange Node */
+.tmq-exchange-node {
+  background: rgba(30, 41, 64, 0.8);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.9rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.15);
+}
+
+.tmq-exchange-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tmq-exchange-info span {
+  font-size: 1.1rem;
+}
+
+.tmq-exchange-info strong {
+  font-size: 0.84rem;
+  color: #67E8F9;
+  font-family: var(--font-mono);
+}
+
+.tmq-exchange-tag {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+}
+
+/* Stack of Queues in Broker */
+.tmq-queues-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tmq-queue-box {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 0.9rem;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.tmq-queue-box.queue-warning {
+  border-color: #F59E0B;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.tmq-queue-box.queue-critical {
+  border-color: #EF4444;
+  background: rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+}
+
+.tmq-q-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.tmq-q-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tmq-q-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.tmq-q-count {
+  font-size: 0.76rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.tmq-q-badge {
+  font-size: 0.64rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.badge-healthy {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.18);
+  color: #FBBF24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.badge-danger {
+  background: rgba(239, 68, 68, 0.25);
+  color: #F87171;
+  border: 1px solid #EF4444;
+  animation: pulseCrash 0.8s infinite alternate;
+}
+
+/* Queue Slots & Message Pills */
+.tmq-queue-slots {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 34px;
+  background: rgba(10, 15, 26, 0.6);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 0.35rem 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tmq-queue-slots::-webkit-scrollbar { display: none; }
+
+.tmq-empty-q-tag {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.tmq-msg-pill {
+  flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.35));
+  border: 1px solid #F59E0B;
+  border-radius: var(--radius-sm);
+  padding: 3px 7px;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: #FEF3C7;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.25);
+  animation: popInPill 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popInPill {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Consumer Nodes */
+.tmq-c-node {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 0.9rem;
+  transition: all 0.25s ease;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.tmq-c-node.consumer-crashed {
+  border-color: #EF4444;
+  background: rgba(239, 68, 68, 0.12);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  animation: pulseCrash 1s infinite alternate;
+}
+
+@keyframes pulseCrash {
+  from { box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
+  to { box-shadow: 0 0 24px rgba(239, 68, 68, 0.7); }
+}
+
+.tmq-c-status {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.status-online {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-crashed {
+  background: rgba(239, 68, 68, 0.25);
+  color: #F87171;
+  border: 1px solid #EF4444;
+}
+
+.tmq-destructive-badge {
+  position: absolute;
+  top: -12px;
+  right: 12px;
+  background: linear-gradient(135deg, #EF4444, #991B1B);
+  color: #FFFFFF;
+  font-size: 0.68rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  padding: 3px 8px;
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+  pointer-events: none;
+  animation: floatFadeUp 1.2s ease-out forwards;
+  z-index: 10;
+}
+
+@keyframes floatFadeUp {
+  0% { opacity: 0; transform: translateY(4px); }
+  25% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(-8px); }
+  100% { opacity: 0; transform: translateY(-16px); }
+}
+
+/* Real-Time Live Audit Console for Traditional MQ */
+.tmq-feed-card {
+  background: rgba(10, 14, 23, 0.95);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  margin-top: 1.2rem;
+}
+
+.tmq-feed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tmq-feed-header h4 {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.tmq-feed-list {
+  list-style: none;
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+
+.tmq-log-item {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1.4;
+}
+
+.tmq-log-time {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.tmq-log-type {
+  font-weight: 800;
+  font-size: 0.68rem;
+}
+
+.tmq-log-publish .tmq-log-type { color: #67E8F9; }
+.tmq-log-destructive_read .tmq-log-type { color: #FCA5A5; }
+.tmq-log-crash .tmq-log-type { color: #EF4444; }
+.tmq-log-recovered .tmq-log-type { color: #34D399; }
+.tmq-log-new_service .tmq-log-type { color: #C4B5FD; }
+.tmq-log-blocked_drain .tmq-log-type { color: #FBBF24; }
+
+/* Visual Comparison Cards: Destructive Read vs Immutable Log */
+.tmq-comparison-section {
+  margin-bottom: 2rem;
+}
+
+.tmq-sec-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tmq-sec-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+  max-width: 900px;
+}
+
+.tmq-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.75rem;
+}
+
+.tmq-flaw-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.tmq-flaw-card:hover {
+  border-color: rgba(245, 158, 11, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.tmq-flaw-icon-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.tmq-flaw-icon {
+  font-size: 1.5rem;
+}
+
+.tmq-flaw-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #FCA5A5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.tmq-flaw-card h4 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.tmq-flaw-card p {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 0.85rem;
+}
+
+.tmq-flaw-fix {
+  background: rgba(6, 182, 212, 0.08);
+  border-left: 3px solid var(--color-cyan);
+  padding: 0.6rem 0.85rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.8rem;
+  color: #A5F3FC;
+  line-height: 1.5;
+}
+
+.tmq-flaw-fix strong {
+  color: #FFFFFF;
+}
+
+/* Comprehensive Comparison Matrix Table */
+.tmq-matrix-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-card);
+}
+
+.tmq-matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
+
+.tmq-matrix-table th {
+  background: rgba(15, 23, 42, 0.95);
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  border-bottom: 2px solid var(--border-subtle);
+}
+
+.tmq-matrix-table th:first-child { width: 22%; color: var(--text-muted); }
+.tmq-matrix-table th:nth-child(2) { width: 39%; color: #FBBF24; }
+.tmq-matrix-table th:nth-child(3) { width: 39%; color: #67E8F9; }
+
+.tmq-matrix-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+.tmq-matrix-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.tmq-matrix-table td strong {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.tmq-col-bad {
+  color: #FECACA;
+}
+
+.tmq-col-good {
+  color: #CFFAFE;
+}
+
+/* Hero CTA to jump to Kafka visualizer */
+.tmq-jump-cta {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(13, 18, 29, 0.95) 50%, rgba(139, 92, 246, 0.15) 100%);
+  border: 1.5px solid var(--color-cyan);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 0 35px rgba(6, 182, 212, 0.25);
+  margin-bottom: 2.5rem;
+}
+
+.tmq-jump-cta h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.tmq-jump-cta p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  max-width: 750px;
+  margin: 0 auto 1.25rem auto;
+  line-height: 1.6;
+}
+
+.btn-cta-launch {
+  background: linear-gradient(135deg, #06B6D4, #3B82F6);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 1rem;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.8rem 1.8rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.45);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-cta-launch:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 28px rgba(6, 182, 212, 0.6);
+}
+
+/* Replay Failure Modal */
+.tmq-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.tmq-modal-overlay.active {
+  display: flex;
+}
+
+.tmq-modal-dialog {
+  background: var(--bg-surface-elevated);
+  border: 1.5px solid #EF4444;
+  border-radius: var(--radius-xl);
+  max-width: 580px;
+  width: 100%;
+  padding: 1.75rem;
+  box-shadow: 0 0 40px rgba(239, 68, 68, 0.45);
+  animation: zoomModal 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes zoomModal {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.tmq-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.tmq-modal-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.tmq-modal-header h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #FCA5A5;
+}
+
+.tmq-modal-header p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.tmq-modal-body {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.tmq-modal-body strong {
+  color: #FFFFFF;
+}
+
+.tmq-modal-code {
+  background: rgba(10, 14, 23, 0.9);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: #F87171;
+  margin: 0.8rem 0;
+}
+
+.tmq-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+

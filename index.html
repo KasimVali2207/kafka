@@ -40,11 +40,509 @@
     </div>
   </header>
 
+  <!-- Top Navigation Tabs -->
+  <nav class="main-tabs-nav" id="main-tabs-nav" aria-label="Architecture Comparison & Simulation Views">
+    <div class="tabs-nav-container">
+      <button class="nav-tab-btn active" data-view="view-traditional-mq" id="tab-btn-mq" title="The Architectural Crisis: Why Traditional Message Queues Break at Scale">
+        <span class="tab-icon">⚠️</span>
+        <span class="tab-title">1. Problems with Traditional MQ (RabbitMQ)</span>
+        <span class="tab-pill pill-warn">Tightly Coupled Architecture &amp; Bottlenecks</span>
+      </button>
+      <button class="nav-tab-btn" data-view="view-kafka-simulator" id="tab-btn-kafka" title="The Distributed Log Solution: Apache Kafka Architecture & Event Flow Simulator">
+        <span class="tab-icon">⚡</span>
+        <span class="tab-title">2. Kafka Architecture &amp; Event Flow Simulator</span>
+        <span class="tab-pill pill-cyan">N-Producers, Partitions &amp; Offsets</span>
+      </button>
+      <button class="nav-tab-btn" data-view="view-syntax-cheatsheet" id="tab-btn-syntax" title="Production Syntax, CLI Commands & Operational Runbooks">
+        <span class="tab-icon">📋</span>
+        <span class="tab-title">3. Commands &amp; Cheat Sheet</span>
+        <span class="tab-pill pill-blue">CLI, Java, Python &amp; Ops</span>
+      </button>
+    </div>
+  </nav>
+
   <!-- Main Container -->
   <main class="main-content">
 
-    <!-- Cluster Config & Dynamic Sizer Toolbar -->
-    <section class="config-toolbar">
+    <!-- ====================================================================
+         VIEW 1: TRADITIONAL MQ (RABBITMQ) & TIGHTLY COUPLED ARCHITECTURE
+         ==================================================================== -->
+    <div class="view-section active" id="view-traditional-mq">
+      
+      <!-- Hero & Context Banner -->
+      <section class="tmq-hero">
+        <div class="tmq-hero-eyebrow">
+          <span>⚠️</span> Architectural Root Cause &bull; Why Apache Kafka Was Born
+        </div>
+        <h2>The Problem with Traditional Message Queues: <span>RabbitMQ &amp; Tight Coupling</span></h2>
+        <p>
+          Before Kafka was invented at LinkedIn, distributed architectures relied on traditional point-to-point message brokers 
+          (RabbitMQ, ActiveMQ, IBM MQ, JMS). While simple for basic task queues, they suffer from 
+          <strong>destructive reads (ephemeral storage)</strong>, <strong>N &times; M connection spaghetti</strong>, 
+          <strong>zero historical replayability</strong>, and <strong>cascading backpressure stalls</strong> when downstream consumers slow down or crash.
+        </p>
+      </section>
+
+      <!-- Interactive Tightly Coupled MQ Visual Simulator Sandbox -->
+      <section class="tmq-simulator-section">
+        
+        <div class="tmq-sim-header">
+          <div class="tmq-sim-title-group">
+            <h3><span>⚡</span> Interactive Sandbox: Tightly Coupled RabbitMQ Architecture &amp; Failure Cascade</h3>
+            <p>Simulate transactions propagating through direct exchanges and queues. Crash the Billing Service to experience how unacknowledged messages trigger TCP backpressure and lock up producers!</p>
+          </div>
+        </div>
+
+        <!-- Architectural Metrics HUD -->
+        <div class="tmq-hud-bar">
+          <div class="tmq-hud-item">
+            <span class="tmq-hud-label">Broker Buffer RAM Pressure</span>
+            <div class="tmq-hud-value" id="tmq-metric-memory">24% (Normal)</div>
+            <div class="tmq-gauge-track">
+              <div class="tmq-gauge-fill" id="tmq-gauge-fill"></div>
+            </div>
+          </div>
+          <div class="tmq-hud-item">
+            <span class="tmq-hud-label">Producer Ingestion Status</span>
+            <div class="tmq-hud-value" id="tmq-metric-producer-status">
+              <span class="tmq-dot dot-green"></span> 🟢 Ingesting Normally
+            </div>
+          </div>
+          <div class="tmq-hud-item">
+            <span class="tmq-hud-label">Message Retention Model</span>
+            <div class="tmq-hud-value" id="tmq-metric-retention" style="color: #FBBF24;">
+              💥 Destructive Read (Purged on ACK)
+            </div>
+          </div>
+          <div class="tmq-hud-item">
+            <span class="tmq-hud-label">Coupling Dependency Complexity</span>
+            <div class="tmq-hud-value" id="tmq-metric-coupling" style="color: #67E8F9;">
+              O(3 &times; 3) = 9 Tight Links
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Action Toolbar -->
+        <div class="tmq-toolbar">
+          <button id="tmq-btn-send" class="btn-tmq-primary" title="Publish an order transaction to amq.direct exchange">
+            <span>⚡</span> Send Transaction
+          </button>
+          <button id="tmq-btn-crash" class="btn-tmq-danger" title="Simulate a crash or slow processing in Billing & Invoicing Service">
+            <span>💥</span> Crash/Slow Billing Service
+          </button>
+          <button id="tmq-btn-add-consumer" class="btn-tmq-purple" title="Show how adding a 4th consumer requires duplicate queues and rewiring">
+            <span>➕</span> Add 4th Consumer (Fraud AI)
+          </button>
+          <button id="tmq-btn-replay" class="btn-tmq-outline" title="Try to replay historical messages like in an audit or bug fix">
+            <span>🔄</span> Attempt Historical Replay
+          </button>
+          <button id="tmq-btn-auto" class="btn-tmq-outline" title="Stream continuous simulated orders">
+            <span>▶</span> Live Traffic: OFF
+          </button>
+          <button id="tmq-btn-reset" class="btn-tmq-outline" title="Reset all queues and restore normal state">
+            <span>🔁</span> Reset Simulation
+          </button>
+        </div>
+
+        <!-- Dynamic Real-Time Alert Banner -->
+        <div class="tmq-alert-banner" id="tmq-alert-banner">
+          <div class="tmq-alert-inner">
+            <span class="tmq-alert-icon">🛑</span>
+            <div class="tmq-alert-content">
+              <h4 id="tmq-alert-title">RabbitMQ Backpressure Triggered!</h4>
+              <p id="tmq-alert-desc">Because the Billing Service crashed, unacknowledged messages filled up the queue buffer and exceeded the RabbitMQ High Memory Watermark.</p>
+            </div>
+          </div>
+          <button class="tmq-close-alert-btn" id="tmq-close-alert">&times;</button>
+        </div>
+
+        <!-- The 3-Tier Traditional MQ Arena Grid -->
+        <div class="tmq-arena-grid">
+          
+          <!-- TIER 1: PRODUCERS -->
+          <div class="tmq-tier-col">
+            <div class="tmq-tier-header">
+              <h4>1. Tightly Coupled Producers</h4>
+              <span>(Clients / APIs)</span>
+            </div>
+
+            <!-- Producer 1 -->
+            <div class="tmq-prod-node" id="tmq-prod-1" data-name="Checkout Web App">
+              <div class="tmq-node-top">
+                <span class="tmq-node-name">🛒 Checkout Web App</span>
+                <span class="tmq-prod-status-tag tag-online">ONLINE</span>
+              </div>
+              <div class="tmq-node-sub"><code>POST /api/v1/orders/pay</code></div>
+              <span class="tmq-coupling-pill">Pushes to <code>amq.direct</code> &bull; TCP Socket</span>
+            </div>
+
+            <!-- Producer 2 -->
+            <div class="tmq-prod-node" id="tmq-prod-2" data-name="Mobile Banking Gateway">
+              <div class="tmq-node-top">
+                <span class="tmq-node-name">📱 Mobile Banking Gateway</span>
+                <span class="tmq-prod-status-tag tag-online">ONLINE</span>
+              </div>
+              <div class="tmq-node-sub"><code>POST /api/v2/wire-transfer</code></div>
+              <span class="tmq-coupling-pill">Pushes to <code>amq.direct</code> &bull; TCP Socket</span>
+            </div>
+
+            <!-- Producer 3 -->
+            <div class="tmq-prod-node" id="tmq-prod-3" data-name="Merchant POS Terminal">
+              <div class="tmq-node-top">
+                <span class="tmq-node-name">💳 Merchant POS Terminal</span>
+                <span class="tmq-prod-status-tag tag-online">ONLINE</span>
+              </div>
+              <div class="tmq-node-sub"><code>POST /pos/swipe-settle</code></div>
+              <span class="tmq-coupling-pill">Pushes to <code>amq.direct</code> &bull; TCP Socket</span>
+            </div>
+          </div>
+
+          <!-- TIER 2: TRADITIONAL BROKER (RabbitMQ / Exchange & Queues) -->
+          <div class="tmq-tier-col">
+            <div class="tmq-tier-header">
+              <h4>2. Traditional Message Broker</h4>
+              <span>(RabbitMQ / ActiveMQ Instance)</span>
+            </div>
+
+            <div class="tmq-broker-box">
+              <div class="tmq-broker-header">
+                <div class="tmq-broker-title">
+                  <span class="tmq-broker-icon">🐰</span>
+                  <div>
+                    <h4>RabbitMQ Node <code>rabbit@broker-01</code></h4>
+                    <span style="font-size: 0.72rem; color: var(--text-muted);">AMQP 0-9-1 Protocol &bull; Ephemeral Queue State in RAM</span>
+                  </div>
+                </div>
+                <span class="tmq-broker-badge">Erlang VM Memory Cap</span>
+              </div>
+
+              <!-- Central Exchange -->
+              <div class="tmq-exchange-node">
+                <div class="tmq-exchange-info">
+                  <span>🔀</span>
+                  <div>
+                    <strong>amq.direct Exchange</strong>
+                    <div class="tmq-exchange-tag">Routing Key: <code>order.created</code> &rarr; Duplicates to bound queues</div>
+                  </div>
+                </div>
+                <span class="tag-commit" style="font-size: 0.65rem;">Direct Binding</span>
+              </div>
+
+              <!-- Queues Stack -->
+              <div class="tmq-queues-stack">
+                
+                <!-- Queue 1: Orders Queue -->
+                <div class="tmq-queue-box" id="tmq-q-orders">
+                  <div class="tmq-q-header">
+                    <span class="tmq-q-name">📦 orders.process.queue</span>
+                    <div class="tmq-q-meta">
+                      <span class="tmq-q-count">2/6</span>
+                      <span class="tmq-q-badge badge-healthy">DRAINING</span>
+                    </div>
+                  </div>
+                  <div class="tmq-queue-slots">
+                    <!-- Rendered by JS -->
+                  </div>
+                </div>
+
+                <!-- Queue 2: Billing Queue (Vulnerable to Crash/Backpressure) -->
+                <div class="tmq-queue-box" id="tmq-q-billing">
+                  <div class="tmq-q-header">
+                    <span class="tmq-q-name">💳 billing.invoice.queue</span>
+                    <div class="tmq-q-meta">
+                      <span class="tmq-q-count">1/6</span>
+                      <span class="tmq-q-badge badge-healthy">DRAINING</span>
+                    </div>
+                  </div>
+                  <div class="tmq-queue-slots">
+                    <!-- Rendered by JS -->
+                  </div>
+                </div>
+
+                <!-- Queue 3: Notifications Queue -->
+                <div class="tmq-queue-box" id="tmq-q-notify">
+                  <div class="tmq-q-header">
+                    <span class="tmq-q-name">🔔 notifications.sms.queue</span>
+                    <div class="tmq-q-meta">
+                      <span class="tmq-q-count">1/6</span>
+                      <span class="tmq-q-badge badge-healthy">DRAINING</span>
+                    </div>
+                  </div>
+                  <div class="tmq-queue-slots">
+                    <!-- Rendered by JS -->
+                  </div>
+                </div>
+
+                <!-- Queue 4: Fraud Detection (Revealed when 4th consumer is added) -->
+                <div class="tmq-queue-box" id="tmq-q-fraud" style="display: none;">
+                  <div class="tmq-q-header">
+                    <span class="tmq-q-name">🛡️ fraud.detection.queue</span>
+                    <div class="tmq-q-meta">
+                      <span class="tmq-q-count">0/6</span>
+                      <span class="tmq-q-badge badge-healthy">DRAINING</span>
+                    </div>
+                  </div>
+                  <div class="tmq-queue-slots">
+                    <!-- Rendered by JS -->
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 3: TIGHTLY COUPLED CONSUMERS -->
+          <div class="tmq-tier-col">
+            <div class="tmq-tier-header">
+              <h4>3. Tightly Coupled Consumers</h4>
+              <span>(Dedicated Point-to-Point Handlers)</span>
+            </div>
+
+            <!-- Consumer 1 -->
+            <div class="tmq-c-node" id="tmq-node-c-order">
+              <div class="tmq-node-top">
+                <span class="tmq-node-name">📦 Order Fulfilment Svc</span>
+                <span class="tmq-c-status status-online">ONLINE &bull; 25ms ACK</span>
+              </div>
+              <div class="tmq-node-sub">Consuming: <code>orders.process.queue</code></div>
+              <span class="tmq-coupling-pill" style="color: #6EE7B7;">Ack &rarr; Deletes message immediately from broker</span>
+            </div>
+
+            <!-- Consumer 2 (Billing - Can be crashed) -->
+            <div class="tmq-c-node" id="tmq-node-c-billing">
+              <div class="tmq-node-top">
+                <span class="tmq-node-name">💳 Billing &amp; Invoice Svc</span>
+                <span class="tmq-c-status status-online">ONLINE &bull; 35ms ACK</span>
+              </div>
+              <div class="tmq-node-sub">Consuming: <code>billing.invoice.queue</code></div>
+              <span class="tmq-coupling-pill" style="color: #F87171;">If this service stalls, messages accumulate in RAM!</span>
+            </div>
+
+            <!-- Consumer 3 -->
+            <div class="tmq-c-node" id="tmq-node-c-notify">
+              <div class="tmq-node-top">
+                <span class="tmq-node-name">🔔 SMS &amp; Push Alerts Svc</span>
+                <span class="tmq-c-status status-online">ONLINE &bull; 12ms ACK</span>
+              </div>
+              <div class="tmq-node-sub">Consuming: <code>notifications.sms.queue</code></div>
+              <span class="tmq-coupling-pill" style="color: #6EE7B7;">Ack &rarr; Deletes message immediately from broker</span>
+            </div>
+
+            <!-- Consumer 4 (Dynamically Added) -->
+            <div class="tmq-c-node" id="tmq-node-c-fraud" style="display: none;">
+              <div class="tmq-node-top">
+                <span class="tmq-node-name">🛡️ ML Fraud Detection AI</span>
+                <span class="tmq-c-status status-online">ONLINE &bull; 75ms ACK</span>
+              </div>
+              <div class="tmq-node-sub">Consuming: <code>fraud.detection.queue</code></div>
+              <span class="tmq-coupling-pill" style="color: #C4B5FD;">Required duplicate queue + new exchange binding!</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Real-Time Event Audit Console for Traditional MQ -->
+        <div class="tmq-feed-card">
+          <div class="tmq-feed-header">
+            <h4><span>📟</span> Live RabbitMQ Lifecycle Audit Log</h4>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Watch messages enter queues and get destroyed upon consumer ACK</span>
+          </div>
+          <ul class="tmq-feed-list" id="tmq-feed-list">
+            <!-- Dynamically populated by traditional-mq.js -->
+          </ul>
+        </div>
+
+      </section>
+
+      <!-- The 4 Fundamental Flaws of Traditional Message Queues -->
+      <section class="tmq-comparison-section">
+        <h3 class="tmq-sec-title"><span>🔍</span> The 4 Architectural Traps of Traditional Message Queues</h3>
+        <p class="tmq-sec-desc">
+          Understanding the deep engineering constraints that led high-throughput platforms like LinkedIn, Netflix, and Uber 
+          to move away from traditional queues to Kafka's append-only distributed commit log.
+        </p>
+
+        <div class="tmq-cards-grid">
+          
+          <!-- Flaw 1 -->
+          <div class="tmq-flaw-card">
+            <div class="tmq-flaw-icon-row">
+              <span class="tmq-flaw-icon">💥</span>
+              <span class="tmq-flaw-badge">Flaw 1: Ephemeral Storage</span>
+            </div>
+            <h4>Destructive Reads &amp; Zero Replayability</h4>
+            <p>
+              In RabbitMQ, as soon as a consumer acknowledges an event (<code>basic.ack</code>), the broker physically deletes it from memory and disk. 
+              If your team discovers a calculation bug in yesterday's billing records, you <strong>cannot rewind the queue</strong>. The data is destroyed forever.
+            </p>
+            <div class="tmq-flaw-fix">
+              <strong>How Kafka Solves This:</strong> Events are written to an immutable append-only commit log and kept for days or months. Consumers only advance an offset pointer. You can rewind back to offset 0 anytime!
+            </div>
+          </div>
+
+          <!-- Flaw 2 -->
+          <div class="tmq-flaw-card">
+            <div class="tmq-flaw-icon-row">
+              <span class="tmq-flaw-icon">🛑</span>
+              <span class="tmq-flaw-badge">Flaw 2: Cascading Stalls</span>
+            </div>
+            <h4>Queue Bloat &amp; Cascading Producer Backpressure</h4>
+            <p>
+              RabbitMQ tracks complex state for every individual message in RAM. If a downstream consumer (like Billing) slows down or crashes, 
+              unacknowledged messages accumulate in the queue. To avoid out-of-memory crashes, the broker activates 
+              <strong>flow control backpressure</strong>, freezing all upstream API producers!
+            </p>
+            <div class="tmq-flaw-fix">
+              <strong>How Kafka Solves This:</strong> Dumb broker, smart consumer. The broker just writes sequential log segments to disk via OS page cache. A slow or dead consumer has zero impact on producers or other consumers.
+            </div>
+          </div>
+
+          <!-- Flaw 3 -->
+          <div class="tmq-flaw-card">
+            <div class="tmq-flaw-icon-row">
+              <span class="tmq-flaw-icon">🍝</span>
+              <span class="tmq-flaw-badge">Flaw 3: Topology Explosion</span>
+            </div>
+            <h4>N &times; M Spaghetti Coupling &amp; Queue Duplication</h4>
+            <p>
+              Because queues are destructive, multiple independent microservices cannot read from the same queue without competing for and stealing messages from each other. 
+              To broadcast 1 event to 4 services, RabbitMQ must duplicate the message into 4 separate queues with 4 exchange bindings ($O(N \times M)$ overhead).
+            </p>
+            <div class="tmq-flaw-fix">
+              <strong>How Kafka Solves This:</strong> 1 single topic partition log. Any number of independent Consumer Groups read the exact same data at their own speed with zero duplication and zero producer changes.
+            </div>
+          </div>
+
+          <!-- Flaw 4 -->
+          <div class="tmq-flaw-card">
+            <div class="tmq-flaw-icon-row">
+              <span class="tmq-flaw-icon">🔀</span>
+              <span class="tmq-flaw-badge">Flaw 4: Ordering Dilemma</span>
+            </div>
+            <h4>Strict Ordering vs. Horizontal Scalability Paradox</h4>
+            <p>
+              In traditional queues, if you have 1 consumer on a queue, ordering is preserved—but throughput is strictly bottlenecked to 1 process. 
+              If you add multiple competing consumers to scale horizontally, messages are dispatched round-robin. If consumer 2 processes faster than consumer 1, 
+              <strong>transactions arrive out of order</strong>!
+            </p>
+            <div class="tmq-flaw-fix">
+              <strong>How Kafka Solves This:</strong> Partitions with Message Keys. Hashing <code>hash(account_id) % partitions</code> guarantees strict in-order chronological sequence per account while enabling massive parallel multi-consumer scale!
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Side-by-Side Comprehensive Comparison Matrix -->
+      <section class="tmq-matrix-card">
+        <h3 class="tmq-sec-title"><span>⚖️</span> Architecture Matrix: Traditional MQ (RabbitMQ) vs. Apache Kafka</h3>
+        <p class="tmq-sec-desc">
+          High-level technical trade-offs between traditional queue broker semantics and distributed append-only event streaming.
+        </p>
+
+        <div style="overflow-x: auto;">
+          <table class="tmq-matrix-table">
+            <thead>
+              <tr>
+                <th>Feature / Dimension</th>
+                <th>Traditional MQ (RabbitMQ / ActiveMQ)</th>
+                <th>Apache Kafka</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. Message Storage Model</strong></td>
+                <td class="tmq-col-bad">
+                  <strong>Ephemeral Destructive Queue</strong>
+                  Messages are tracked in broker memory and deleted immediately once consumed &amp; acknowledged (destructive read).
+                </td>
+                <td class="tmq-col-good">
+                  <strong>Immutable Append-Only Commit Log</strong>
+                  Messages are sequentially written to persistent log segments on disk. Data is never deleted on consumption.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>2. Consumer Decoupling</strong></td>
+                <td class="tmq-col-bad">
+                  <strong>Tightly Bound Queues ($N \times M$)</strong>
+                  Every consumer requires its own dedicated queue and exchange binding. Broadcast requires duplicating data per consumer.
+                </td>
+                <td class="tmq-col-good">
+                  <strong>Totally Decoupled Consumer Groups</strong>
+                  Single topic with multiple partitions. Any number of consumer groups read concurrently using independent offset pointers.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>3. Downstream Consumer Failure</strong></td>
+                <td class="tmq-col-bad">
+                  <strong>Cascading Failure &amp; Backpressure</strong>
+                  Unconsumed messages pile up in broker RAM. Broker throttles or blocks upstream producers to prevent OOM crash.
+                </td>
+                <td class="tmq-col-good">
+                  <strong>Zero Impact on Producers / Peers</strong>
+                  Kafka broker continues appending at multi-gigabyte disk speeds. Slow or crashed consumer simply pauses its offset.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>4. Historical Replayability</strong></td>
+                <td class="tmq-col-bad">
+                  <strong>Impossible (0% Replayable)</strong>
+                  Consumed messages are deleted. Cannot rewind to re-process corrupted data, perform audits, or train ML models.
+                </td>
+                <td class="tmq-col-good">
+                  <strong>Arbitrary Offset Rewind &amp; Time Travel</strong>
+                  Consumers can reset their committed offset to timestamp or offset 0 to replay historical events at will.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>5. Throughput &amp; Zero-Copy I/O</strong></td>
+                <td class="tmq-col-bad">
+                  <strong>Thousands of msg/sec</strong>
+                  Heavy CPU and RAM overhead per message for state tracking (unacked, ready, redelivered flags, exchange routing).
+                </td>
+                <td class="tmq-col-good">
+                  <strong>Millions of msg/sec</strong>
+                  Utilizes OS Page Cache and Zero-Copy I/O (Linux <code>sendfile</code> syscall) for direct sequential disk-to-network DMA streaming.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>6. Parallelism &amp; Ordering</strong></td>
+                <td class="tmq-col-bad">
+                  <strong>Ordering or Scale (Choose One)</strong>
+                  Multiple consumers on 1 queue process out-of-order. Strict ordering forces single-threaded consumer bottleneck.
+                </td>
+                <td class="tmq-col-good">
+                  <strong>Deterministic Key-Partitioned Ordering</strong>
+                  <code>hash(account_id) % num_partitions</code> guarantees total order for each account while scaling horizontally across partitions.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Jump to Kafka Visualizer Hero CTA -->
+      <section class="tmq-jump-cta">
+        <h3>Ready to Experience How Kafka Solves This?</h3>
+        <p>
+          Switch to our interactive Kafka Visualizer to test dynamic N-Producers, Kafka Brokers with KRaft consensus, 
+          Partition Key Hashing, Sequential Log Offsets, and Independent Consumer Groups in real-time!
+        </p>
+        <button class="btn-cta-launch btn-jump-to-kafka">
+          <span>🚀</span> Open Kafka Architecture &amp; Event Flow Simulator &rarr;
+        </button>
+      </section>
+
+    </div><!-- /#view-traditional-mq -->
+
+
+    <!-- ====================================================================
+         VIEW 2: KAFKA ARCHITECTURE & EVENT FLOW SIMULATOR (EXISTING CORE)
+         ==================================================================== -->
+    <div class="view-section" id="view-kafka-simulator">
+
+      <!-- Cluster Config & Dynamic Sizer Toolbar -->
+      <section class="config-toolbar">
       <div class="config-grid">
         
         <!-- Dynamic N Producers -->
@@ -305,16 +803,58 @@
       </div>
     </section>
 
-    <div id="syntax-placeholder">
-  <button id="load-syntax-btn" class="syntax-load-btn">Show Kafka Syntax Cheat Sheet</button>
-</div>
+    </div><!-- /#view-kafka-simulator -->
+
+    <!-- ====================================================================
+         VIEW 3: SYNTAX, RUNBOOKS & TROUBLESHOOTING CHEAT SHEET
+         ==================================================================== -->
+    <div class="view-section" id="view-syntax-cheatsheet">
+      <div id="syntax-placeholder">
+        <button id="load-syntax-btn" class="syntax-load-btn">Show Kafka Syntax Cheat Sheet</button>
+      </div>
+    </div>
 
   </main>
+
+  <!-- Modal: Destructive Read / Replay Error Demonstration -->
+  <div class="tmq-modal-overlay" id="tmq-replay-modal">
+    <div class="tmq-modal-dialog">
+      <div class="tmq-modal-header">
+        <span class="tmq-modal-icon">🚫</span>
+        <div>
+          <h3>Operation Denied: Destructive Read Violation</h3>
+          <p>Traditional Message Queue (RabbitMQ / AMQP 0-9-1)</p>
+        </div>
+      </div>
+      <div class="tmq-modal-body">
+        <p>
+          In RabbitMQ, as soon as a consumer issues <code>basic.ack</code>, the broker <strong>physically deletes and frees the message memory</strong>.
+        </p>
+        <div class="tmq-modal-code">
+          ERROR [404]: Messages ORD-101 through ORD-105 have already been acknowledged and purged from queue 'billing.invoice.queue'.
+          Offset pointers do NOT exist in RabbitMQ. Historical rewind is physically impossible.
+        </div>
+        <p>
+          If your downstream billing logic had a bug, or an auditor requests yesterday's transaction stream, 
+          <strong>you cannot replay it from RabbitMQ</strong>.
+        </p>
+        <p style="margin-top: 0.6rem; color: #A5F3FC;">
+          💡 <strong>In Apache Kafka:</strong> Messages are appended to an immutable commit log. You can simply reset your consumer group's offset 
+          (<code>--to-offset 0</code> or <code>--to-datetime "yesterday"</code>) and replay millions of events without affecting any other microservice!
+        </p>
+      </div>
+      <div class="tmq-modal-actions">
+        <button class="btn btn-ghost" id="tmq-close-replay-modal">Close</button>
+        <button class="btn btn-primary btn-jump-to-kafka">See How Kafka Enables Replay &rarr;</button>
+      </div>
+    </div>
+  </div>
 
   <footer class="app-footer">
     <div class="footer-container">
       <p>KafkaVisualizer &bull; Interactive Architecture & Event Flow Simulator</p>
       <div class="footer-tags">
+        <span>Traditional MQ vs Kafka</span>
         <span>N-Producers</span>
         <span>Topic Partitions</span>
         <span>Log Offsets</span>
@@ -325,6 +865,7 @@
   </footer>
 
   <script src="app.js"></script>
+  <script src="traditional-mq.js"></script>
   <script src="syntax.js"></script>
 </body>
 </html>

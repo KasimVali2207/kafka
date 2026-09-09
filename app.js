@@ -212,6 +212,7 @@
     DOM.canvas.width = rect.width;
     DOM.canvas.height = rect.height;
   }
+  window.resizeKafkaCanvas = resizeCanvas;
 
   function getCenter(el) {
     if (!el || !DOM.canvas) return { x: 0, y: 0 };
